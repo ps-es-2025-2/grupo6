@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=CheckinRepositorio
+comment1.params=database
+comment1.target=CheckinRepositorio(Database)
+comment2.params=
+comment2.target=java.util.List\ listarAtivos()
+comment3.params=
+comment3.target=java.util.List\ listarFinalizados()
+numComments=4

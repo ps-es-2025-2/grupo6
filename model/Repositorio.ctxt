@@ -1,0 +1,22 @@
+#BlueJ class context
+comment0.target=Repositorio
+comment0.text=\n\ Reposit\u00F3rio\ gen\u00E9rico\ respons\u00E1vel\ por\ intermediar\ todas\ as\ opera\u00E7\u00F5es\ CRUD\ via\ ORMLite.\n\ Cont\u00E9m\ m\u00E9todos\ b\u00E1sicos\ e\ exp\u00F5e\ o\ DAO\ para\ consultas\ espec\u00EDficas.\n
+comment1.params=database\ entityClass
+comment1.target=Repositorio(Database,\ java.lang.Class)
+comment2.params=
+comment2.target=com.j256.ormlite.dao.Dao\ getDao()
+comment3.params=entity
+comment3.target=java.lang.Object\ create(java.lang.Object)
+comment4.params=entity
+comment4.target=void\ update(java.lang.Object)
+comment5.params=entity
+comment5.target=void\ delete(java.lang.Object)
+comment6.params=id
+comment6.target=java.lang.Object\ loadFromId(java.lang.Object)
+comment7.params=
+comment7.target=java.util.List\ loadAll()
+comment8.params=
+comment8.target=Database\ getDatabase()
+comment9.params=
+comment9.target=java.lang.Class\ getEntityClass()
+numComments=10

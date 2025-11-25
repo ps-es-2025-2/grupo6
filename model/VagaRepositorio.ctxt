@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=VagaRepositorio
+comment1.params=database
+comment1.target=VagaRepositorio(Database)
+comment2.params=
+comment2.target=java.util.List\ listarLivres()
+comment3.params=vaga\ ocupada
+comment3.target=void\ atualizarOcupacao(Vaga,\ boolean)
+numComments=4
