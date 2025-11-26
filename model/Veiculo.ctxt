@@ -1,0 +1,25 @@
+#BlueJ class context
+comment0.target=Veiculo
+comment1.params=
+comment1.target=Veiculo()
+comment10.params=proprietario
+comment10.target=void\ setProprietario(java.lang.String)
+comment11.params=
+comment11.target=java.lang.String\ toString()
+comment2.params=placa\ modelo\ cor\ proprietario
+comment2.target=Veiculo(java.lang.String,\ java.lang.String,\ java.lang.String,\ java.lang.String)
+comment3.params=
+comment3.target=java.lang.String\ getPlaca()
+comment4.params=placa
+comment4.target=void\ setPlaca(java.lang.String)
+comment5.params=
+comment5.target=java.lang.String\ getModelo()
+comment6.params=modelo
+comment6.target=void\ setModelo(java.lang.String)
+comment7.params=
+comment7.target=java.lang.String\ getCor()
+comment8.params=cor
+comment8.target=void\ setCor(java.lang.String)
+comment9.params=
+comment9.target=java.lang.String\ getProprietario()
+numComments=12

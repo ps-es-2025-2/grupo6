@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=VeiculoController
+comment1.params=location\ resources
+comment1.target=void\ initialize(java.net.URL,\ java.util.ResourceBundle)
+comment10.params=entidade\ id
+comment10.target=void\ setIdOnEntity(model.Veiculo,\ java.lang.String)
+comment2.params=
+comment2.target=model.Repositorio\ getRepositorio()
+comment3.params=entidade
+comment3.target=view.Veiculo\ modelToView(model.Veiculo)
+comment4.params=
+comment4.target=model.Veiculo\ viewToModel()
+comment5.params=item
+comment5.target=void\ preencherCampos(view.Veiculo)
+comment6.params=
+comment6.target=void\ limparCampos()
+comment7.params=desabilitado
+comment7.target=void\ desabilitarCampos(boolean)
+comment8.params=
+comment8.target=javafx.scene.control.TableView\ getTabela()
+comment9.params=viewModel
+comment9.target=java.lang.String\ getIdFromViewModel(view.Veiculo)
+numComments=11

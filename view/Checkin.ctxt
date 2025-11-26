@@ -1,0 +1,25 @@
+#BlueJ class context
+comment0.target=Checkin
+comment1.params=id\ placa\ vaga\ horarioEntrada\ observacao
+comment1.target=Checkin(int,\ java.lang.String,\ java.lang.String,\ java.time.LocalDateTime,\ java.lang.String)
+comment10.params=
+comment10.target=java.lang.String\ getObservacao()
+comment11.params=
+comment11.target=javafx.beans.property.StringProperty\ observacaoProperty()
+comment2.params=
+comment2.target=java.lang.String\ getId()
+comment3.params=
+comment3.target=javafx.beans.property.StringProperty\ idProperty()
+comment4.params=
+comment4.target=java.lang.String\ getPlaca()
+comment5.params=
+comment5.target=javafx.beans.property.StringProperty\ placaProperty()
+comment6.params=
+comment6.target=java.lang.String\ getVaga()
+comment7.params=
+comment7.target=javafx.beans.property.StringProperty\ vagaProperty()
+comment8.params=
+comment8.target=java.time.LocalDateTime\ getHorarioEntrada()
+comment9.params=
+comment9.target=javafx.beans.property.ObjectProperty\ horarioEntradaProperty()
+numComments=12

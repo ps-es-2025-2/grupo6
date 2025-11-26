@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=AppController
+comment1.params=args
+comment1.target=void\ main(java.lang.String[])
+comment2.params=location\ resources
+comment2.target=void\ initialize(java.net.URL,\ java.util.ResourceBundle)
+comment3.params=resource
+comment3.target=javafx.scene.Parent\ loadView(java.lang.String)
+numComments=4

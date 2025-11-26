@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CheckoutController">
+   <center>
+      <TableView fx:id="tabela" prefHeight="400.0">
+         <columns>
+            <TableColumn fx:id="idCol" prefWidth="80.0" text="ID"/>
+            <TableColumn fx:id="checkinInfoCol" prefWidth="220.0" text="Check-out"/>
+            <TableColumn fx:id="saidaCol" prefWidth="220.0" text="Saída"/>
+            <TableColumn fx:id="valorCol" prefWidth="150.0" text="Valor"/>
+         </columns>
+      </TableView>
+   </center>
+   <bottom>
+      <BorderPane>
+         <padding>
+            <Insets bottom="12" left="12" right="12" top="12"/>
+         </padding>
+         <center>
+            <GridPane hgap="12" vgap="8">
+               <Label text="Check-out"/>
+               <ComboBox fx:id="checkinCombo" prefWidth="280.0" GridPane.columnIndex="1"/>
+               <Label text="Data Saída" GridPane.rowIndex="1"/>
+               <DatePicker fx:id="saidaDatePicker" onAction="#onHorarioChanged" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+               <Label text="Hora Saída" GridPane.rowIndex="2"/>
+               <TextField fx:id="saidaHoraField" onKeyReleased="#onHorarioChanged" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+               <Label text="Valor Hora (R$)" GridPane.rowIndex="3"/>
+               <TextField fx:id="valorHoraField" onKeyReleased="#onHorarioChanged" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+               <Label text="Valor Calculado" GridPane.rowIndex="4"/>
+               <Label fx:id="valorCalculadoLabel" text="R$ 0,00" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+            </GridPane>
+         </center>
+         <bottom>
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+               <Button fx:id="adicionarButton" onAction="#onAdicionar" text="Novo"/>
+               <Button fx:id="atualizarButton" onAction="#onAtualizar" text="Editar"/>
+               <Button fx:id="deletarButton" onAction="#onDeletar" text="Excluir"/>
+               <Button fx:id="confirmarButton" onAction="#onConfirmar" text="Confirmar"/>
+               <Button fx:id="cancelarButton" onAction="#onCancelar" text="Cancelar"/>
+            </HBox>
+         </bottom>
+      </BorderPane>
+   </bottom>
+</BorderPane>
+
