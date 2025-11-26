@@ -17,7 +17,7 @@
       <TableView fx:id="tabela" prefHeight="400.0">
          <columns>
             <TableColumn fx:id="idCol" prefWidth="80.0" text="ID"/>
-            <TableColumn fx:id="checkinInfoCol" prefWidth="220.0" text="Check-in"/>
+            <TableColumn fx:id="checkinInfoCol" prefWidth="220.0" text="Check-out"/>
             <TableColumn fx:id="saidaCol" prefWidth="220.0" text="Saída"/>
             <TableColumn fx:id="valorCol" prefWidth="150.0" text="Valor"/>
          </columns>
@@ -30,7 +30,7 @@
          </padding>
          <center>
             <GridPane hgap="12" vgap="8">
-               <Label text="Check-in"/>
+               <Label text="Check-out"/>
                <ComboBox fx:id="checkinCombo" prefWidth="280.0" GridPane.columnIndex="1"/>
                <Label text="Data Saída" GridPane.rowIndex="1"/>
                <DatePicker fx:id="saidaDatePicker" onAction="#onHorarioChanged" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
