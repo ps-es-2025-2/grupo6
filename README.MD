@@ -1,6 +1,5 @@
-================================================================================
-TÍTULO: EasyStop - Gestão de Estacionamentos com JavaFX + ORMLite
-================================================================================
+# EasyStop - Gestão de Estacionamentos
+
 
 SOBRE O PROJETO
 ---------------
@@ -15,7 +14,7 @@ PILHA TECNOLÓGICA
 - Java 11+
 - JavaFX 11 (FXML/Scene Builder)
 - ORMLite 6.x (DAO + annotations)
-- SQLite (padrão) ou MariaDB (configurável em `model/Repositorios`)
+
 
 ESTRUTURA DE PASTAS
 -------------------
@@ -27,10 +26,61 @@ ESTRUTURA DE PASTAS
 
 COMO EXECUTAR
 -------------
-1. Garanta Java 11+ e dependências JavaFX/ORMLite no classpath.
-2. (Opcional) Ajuste `model/Repositorios` para MariaDB trocando a URL JDBC.
-3. Rode `view.AppView` (ou `controller.AppController.main`). O arquivo
-   `easystop.db` será criado automaticamente.
+
+### 1️⃣ Pré-requisitos
+
+Antes de rodar o EasyStop, você precisa instalar e configurar algumas ferramentas:
+
+### Java JDK 11+
+- Faça download em: [https://www.oracle.com/java/technologies/javase-jdk11-downloads.html](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)  
+- Instale seguindo as instruções do seu sistema operacional.  
+- Configure a variável de ambiente `JAVA_HOME`.
+
+### BlueJ (Opcional para visualização e execução)
+- Faça download em: [https://www.bluej.org/](https://www.bluej.org/)  
+- Instale e configure o BlueJ para utilizar o JDK 11+.
+- BlueJ permite abrir o projeto, compilar, executar classes Java e visualizar diagramas de relacionamento entre as classes.
+
+### Bibliotecas Necessárias (JARs) [Siga o Tutorial](https://github.com/marceloakira/tutorials/tree/main/orm)
+O EasyStop utiliza ORMLite para persistência de dados e SQLite como banco de dados leve. Baixe as seguintes bibliotecas:
+
+- `sqlite-jdbc` – Driver JDBC para SQLite  
+- `ormlite-core` – Biblioteca principal do ORMLite  
+- `ormlite-jdbc` – Conector JDBC do ORMLite  
+- `slf4j-api` – API de logging  
+- `slf4j-simple` – Implementação simples do SLF4J
+
+
+**Como adicionar as bibliotecas no BlueJ:**
+1. Abra BlueJ → Preferências → Bibliotecas  
+2. Clique em **Adicionar** e selecione os JARs baixados  
+3. Reinicie o BlueJ
+
+### 2️⃣ Clonando o Projeto do GitHub
+
+Para obter a versão mais recente do EasyStop:
+
+1. Abra o terminal ou prompt de comando.  
+2. Navegue até a pasta onde deseja clonar o projeto.  
+3. Execute o comando:
+
+   ```bash
+   git clone https://github.com/abraao8401/EasyStop.git
+
+
+### 3️⃣  Configuração do Banco de Dados
+
+O EasyStop utiliza SQLite, que cria um arquivo `.db` local automaticamente.
+
+- Nenhuma instalação adicional é necessária.  
+- O arquivo `easystop.db` será criado na primeira execução do projeto.
+
+### 4️⃣ Executando o Projeto
+
+1. Abra o BlueJ e carregue o projeto EasyStop.  
+2. Compile todas as classes (`Compile All`).  
+3. Execute a classe principal:`view.AppView`.  
+4. O JavaFX carregará a interface com abas para Veículos, Vagas, Check-in, Checkout e Pagamentos.
 
 TUTORIAL PASSO A PASSO
 ----------------------
@@ -51,10 +101,4 @@ DETALHES ARQUITETURAIS
 - Controllers convertem entidades ↔ view-models garantindo TableViews reativas.
 - `AbstractCrudController` padroniza botões, estados e carregamento inicial.
 - Regras como bloqueio/liberação de vagas e cálculo do valor/hora ficam nas
-  camadas de model/repositorio, mantendo os controllers livres de SQL.
-- Scripts SQL e UML documentam o domínio e facilitam migração para MariaDB.
-
-AUTORIA
--------
-EasyStop foi reescrito integralmente por GPT-5.1 Codex (Cursor Agent) em 2025,
-com base nas especificações fornecidas pelo cliente.
+  camadas de model/repositorio.
