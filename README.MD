@@ -21,7 +21,6 @@ ESTRUTURA DE PASTAS
 - `model/`          → Entidades ORMLite, repositórios e acesso ao banco.
 - `view/`           → View-models (JavaFX Properties), FXML e `AppView`.
 - `controller/`     → Controllers concretos herdando de `AbstractCrudController`.
-- `database/`       → Scripts SQL (`database/easystop_schema.sql`).
 - `docs/`           → Documentação e diagrama UML (`docs/easystop-uml.md`).
 
 COMO EXECUTAR
