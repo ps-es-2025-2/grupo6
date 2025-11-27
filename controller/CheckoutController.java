@@ -9,8 +9,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ResourceBundle;
 
+import javafx.event.ActionEvent;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -20,6 +22,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
+import javafx.scene.Scene;
+import javafx.scene.Parent;
+import javafx.stage.Stage;
 import model.Checkin;
 import model.CheckinRepositorio;
 import model.Checkout;
@@ -52,6 +57,9 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
     private TextField valorHoraField;
     @FXML
     private Label valorCalculadoLabel;
+    @FXML
+    private javafx.scene.control.ComboBox<String> formaPagamentoCombo;
+
 
     @FXML
     private Button adicionarButton;
@@ -86,6 +94,8 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
             public Checkin fromString(String string) {
                 return null;
             }
+
+            
         });
 
         recarregarCheckins();
@@ -100,6 +110,15 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
         super.deletarButton = deletarButton;
         super.confirmarButton = confirmarButton;
         super.cancelarButton = cancelarButton;
+
+        formaPagamentoCombo.setItems(FXCollections.observableArrayList(
+            "Dinheiro", 
+            "Cartão", 
+            "Pix"
+        ));
+    
+        formaPagamentoCombo.getSelectionModel().select("Dinheiro");
+    
 
         super.initialize();
     }
@@ -282,5 +301,33 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
     private void onHorarioChanged() {
         atualizarValorCalculado();
     }
+
+    private void abrirTelaPagamentoCartao() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/pagamentoCartao.fxml"));
+            Parent root = loader.load();
+    
+            Stage stage = new Stage();
+            stage.setTitle("Pagamento - Cartão");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.show();
+    
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, 
+                "Erro ao abrir tela de pagamento: " + e.getMessage()
+            ).show();
+        }
+    }
+
+    @FXML
+    private void onFormaPagamentoChanged(ActionEvent event) {
+    String selected = formaPagamentoCombo.getValue();
+    if ("Cartão".equals(selected)) {
+        abrirTelaPagamentoCartao();
+    }
+}
+
+    
 }
 

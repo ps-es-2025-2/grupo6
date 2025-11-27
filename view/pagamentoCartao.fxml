@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.PagamentoCartaoController">
+
+    <center>
+        <VBox spacing="12" alignment="CENTER">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <Label text="Pagamento com Cartão" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+            <TextField fx:id="numeroCartaoField" promptText="Número do Cartão" />
+            <TextField fx:id="nomeTitularField" promptText="Nome do Titular" />
+            <TextField fx:id="validadeField" promptText="Validade (MM/AA)" />
+            <PasswordField fx:id="cvvField" promptText="CVV" />
+
+            <Button text="Confirmar Pagamento"
+                    prefWidth="200"
+                    onAction="#onConfirmarPagamento"/>
+        </VBox>
+    </center>
+
+</BorderPane>
