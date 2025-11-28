@@ -4,11 +4,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.service.ServicoPagamento;
+import model.PagamentoCartao;
+import model.Checkout;
+import model.enums.StatusPagamento; // << IMPORTANTE
 
 public class PagamentoCartaoController {
 
@@ -17,54 +17,63 @@ public class PagamentoCartaoController {
     @FXML private TextField validadeField;
     @FXML private PasswordField cvvField;
 
+    private PagamentoCartao pagamentoCartao;
     private final ServicoPagamento servicoPagamento = new ServicoPagamento();
+    private Checkout checkout;
+    private double valor;
+
+    // callback para o CheckoutController
+    private java.util.function.Consumer<Boolean> callbackPagamento;
+
+    public void setCallbackPagamento(java.util.function.Consumer<Boolean> callback) {
+        this.callbackPagamento = callback;
+    }
 
     @FXML
     private void onConfirmarPagamento() {
+
         String numero = numeroCartaoField.getText();
         String nome = nomeTitularField.getText();
         String validade = validadeField.getText();
         String cvv = cvvField.getText();
 
-        //⚠ Validação simples
         if (numero.isEmpty() || nome.isEmpty() || validade.isEmpty() || cvv.isEmpty()) {
             new Alert(Alert.AlertType.WARNING, "Preencha todos os campos!").show();
             return;
         }
 
-        boolean sucesso = servicoPagamento.processarPagamentoCartao(
-                numero, nome, validade, cvv
+        pagamentoCartao = new PagamentoCartao(
+                checkout,
+                valor,
+                numero,
+                nome,
+                validade,
+                cvv
         );
 
-        if (sucesso) {
-            new Alert(Alert.AlertType.INFORMATION,
-                    "Pagamento realizado com sucesso!")
-                    .show();
+        boolean aprovado = servicoPagamento.realizarPagamento(pagamentoCartao);
 
-            voltarParaCheckout();
+        if (aprovado) {
+            pagamentoCartao.setStatus(StatusPagamento.APROVADO);
+            new Alert(Alert.AlertType.INFORMATION, "Pagamento aprovado!").show();
         } else {
-            new Alert(Alert.AlertType.ERROR,
-                    "Erro ao processar pagamento. Tente novamente.")
-                    .show();
-
-            voltarParaCheckout();
+            pagamentoCartao.setStatus(StatusPagamento.RECUSADO);
+            new Alert(Alert.AlertType.ERROR, "Pagamento recusado. Tente novamente.").show();
         }
+
+        // retorna ao controller pai
+        if (callbackPagamento != null) {
+            callbackPagamento.accept(aprovado);
+        }
+
+        // fecha a janela atual
+        Stage stage = (Stage) numeroCartaoField.getScene().getWindow();
+        stage.close();
     }
 
-    private void voltarParaCheckout() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/checkout.fxml"));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) numeroCartaoField.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Checkout");
-            stage.show();
-
-        } catch (Exception e) {
-            new Alert(Alert.AlertType.ERROR,
-                    "Erro ao voltar para checkout: " + e.getMessage())
-                    .show();
-        }
+    // recebe os dados enviados pelo CheckoutController
+    public void receberDados(Checkout checkout, double valor) {
+        this.checkout = checkout;
+        this.valor = valor;
     }
 }

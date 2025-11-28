@@ -1,16 +1,23 @@
 package model.service;
 
+import model.Pagamento;
+import model.PagamentoCartao;
+
 public class ServicoPagamento {
 
-    public boolean processarPagamentoCartao(String numero, String nome, String validade, String cvv) {
+    /**
+     * Recebe um Pagamento genérico e chama o método polimórfico processarPagamento()
+     */
+    public boolean realizarPagamento(Pagamento pagamento) {
 
-        // Aqui você implementa sua lógica real de pagamento
-        // Por enquanto, vamos simular:
+        if (pagamento == null)
+            return false;
 
-        if (numero.startsWith("4") && cvv.length() == 3) {
-            return true; // Simula pagamento aprovado
-        }
-
-        return false; // Pagamento negado
+        // chama o método correto da classe filha:
+        // - PagamentoCartao.processarPagamento()
+        // - PagamentoPix.processarPagamento()
+        // - PagamentoDinheiro.processarPagamento()
+        return ((PagamentoCartao) pagamento).processarPagamento();
+        
     }
 }
