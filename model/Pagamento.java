@@ -9,7 +9,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import model.enums.StatusPagamento;
 
 @DatabaseTable(tableName = "pagamentos")
-public abstract class Pagamento {
+public class Pagamento {
 
     @DatabaseField(generatedId = true)
     protected int id;
@@ -46,8 +46,7 @@ public abstract class Pagamento {
     private String gerarToken() {
         return "tok_" + java.util.UUID.randomUUID().toString().replace("-", "");
     }
-    public abstract boolean processarPagamento();
-    
+    public boolean processarPagamento() {return false;};
     // Getters
     public String getTokenUnico() { return tokenUnico; }
     public int getId() { return id; }
@@ -58,4 +57,5 @@ public abstract class Pagamento {
     public double getValor() { return valor; }
     public LocalDateTime getDataPagamento() { return dataPagamento; }
     public void setStatus(StatusPagamento status) { this.status = status; }
+    public void setDataPagamento(LocalDateTime dataPagamento) {this.dataPagamento = dataPagamento;}
 }

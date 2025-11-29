@@ -1,7 +1,6 @@
 package model.service;
 
 import model.Pagamento;
-import model.PagamentoCartao;
 
 public class ServicoPagamento {
 
@@ -17,7 +16,6 @@ public class ServicoPagamento {
         // - PagamentoCartao.processarPagamento()
         // - PagamentoPix.processarPagamento()
         // - PagamentoDinheiro.processarPagamento()
-        return ((PagamentoCartao) pagamento).processarPagamento();
-        
+        return pagamento.processarPagamento();
     }
 }

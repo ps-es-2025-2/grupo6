@@ -5,10 +5,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
 import model.service.ServicoPagamento;
 import model.PagamentoCartao;
+import model.Repositorios;
 import model.Checkout;
-import model.enums.StatusPagamento; // << IMPORTANTE
+import model.enums.StatusPagamento;
 
 public class PagamentoCartaoController {
 
@@ -51,27 +53,39 @@ public class PagamentoCartaoController {
                 cvv
         );
 
+        // PROCESSA pagamento via serviço
         boolean aprovado = servicoPagamento.realizarPagamento(pagamentoCartao);
 
+        // ATUALIZA status
+        pagamentoCartao.setStatus(
+                aprovado ? StatusPagamento.APROVADO : StatusPagamento.RECUSADO
+        );
+
+        // SALVA no banco (somente dados permitidos do Pagamento)
+        try {
+            Repositorios.PAGAMENTOS.create(pagamentoCartao);
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, "Erro ao salvar pagamento: " + e.getMessage()).show();
+            return;
+        }
+
+        // FEEDBACK AO USUÁRIO
         if (aprovado) {
-            pagamentoCartao.setStatus(StatusPagamento.APROVADO);
             new Alert(Alert.AlertType.INFORMATION, "Pagamento aprovado!").show();
         } else {
-            pagamentoCartao.setStatus(StatusPagamento.RECUSADO);
             new Alert(Alert.AlertType.ERROR, "Pagamento recusado. Tente novamente.").show();
         }
 
-        // retorna ao controller pai
+        // callback para CheckoutController atualizar UI
         if (callbackPagamento != null) {
             callbackPagamento.accept(aprovado);
         }
 
-        // fecha a janela atual
+        // fecha a janela
         Stage stage = (Stage) numeroCartaoField.getScene().getWindow();
         stage.close();
     }
 
-    // recebe os dados enviados pelo CheckoutController
     public void receberDados(Checkout checkout, double valor) {
         this.checkout = checkout;
         this.valor = valor;

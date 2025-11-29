@@ -8,7 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import model.enums.StatusPagamento;
 
-
+@DatabaseTable(tableName = "pagamentos")
 public class PagamentoCartao extends Pagamento {
 
    
@@ -69,6 +69,8 @@ public class PagamentoCartao extends Pagamento {
         this.cvv = null;
         this.nomeTitular = null;
         this.validade = null;
+
+    
     
         return true;
     }
