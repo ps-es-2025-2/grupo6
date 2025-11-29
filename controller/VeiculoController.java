@@ -2,6 +2,7 @@ package controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -70,6 +71,54 @@ public class VeiculoController extends AbstractCrudController<Veiculo, view.Veic
         return repositorio;
     }
 
+    // ----------------------------- NOVAS VALIDAÇÕES -----------------------------
+
+    private boolean validarCampos() {
+
+        String placa = placaField.getText().trim().toUpperCase();
+        String modelo = modeloField.getText().trim();
+        String cor = corField.getText().trim();
+        String proprietario = proprietarioField.getText().trim();
+
+        // Regex de placa Mercosul: LLLNLNN
+        if (!placa.matches("^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$")) {
+            alert("Placa inválida. Use o padrão Mercosul (ex: ABC1D23).");
+            return false;
+        }
+
+        // Verifica duplicidade da placa
+        if (repositorio.existsById(placa)) {
+            alert("Já existe um veículo cadastrado com esta placa.");
+            return false;
+        }
+
+        // Modelo: letras, números e espaços
+        if (!modelo.matches("^[A-Za-z0-9 ]{2,40}$")) {
+            alert("Modelo inválido. Use apenas letras, números e espaços.");
+            return false;
+        }
+
+        // Cor: somente letras e espaços
+        if (!cor.matches("^[A-Za-zÀ-ÖØ-öø-ÿ ]{3,20}$")) {
+            alert("Cor inválida. Use apenas letras e espaços.");
+            return false;
+        }
+
+        // Proprietário: somente letras e espaços
+        if (!proprietario.matches("^[A-Za-zÀ-ÖØ-öø-ÿ ]{3,50}$")) {
+            alert("Nome do proprietário inválido. Use apenas letras e espaços.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void alert(String msg) {
+        new Alert(Alert.AlertType.ERROR, msg).show();
+    }
+
+    // ---------------------------------------------------------------------------
+
     @Override
     protected view.Veiculo modelToView(Veiculo entidade) {
         return new view.Veiculo(entidade.getPlaca(), entidade.getModelo(), entidade.getCor(), entidade.getProprietario());
@@ -77,8 +126,12 @@ public class VeiculoController extends AbstractCrudController<Veiculo, view.Veic
 
     @Override
     protected Veiculo viewToModel() {
+
+        // 🔥 Valida antes de montar o objeto
+        if (!validarCampos()) return null;
+
         Veiculo veiculo = new Veiculo();
-        veiculo.setPlaca(placaField.getText().trim());
+        veiculo.setPlaca(placaField.getText().trim().toUpperCase());
         veiculo.setModelo(modeloField.getText().trim());
         veiculo.setCor(corField.getText().trim());
         veiculo.setProprietario(proprietarioField.getText().trim());
@@ -124,4 +177,3 @@ public class VeiculoController extends AbstractCrudController<Veiculo, view.Veic
         entidade.setPlaca(id);
     }
 }
-
