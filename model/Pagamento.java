@@ -55,6 +55,7 @@ public class Pagamento {
     public String getTipo() { return tipo; }
     public StatusPagamento getStatus() { return status; }
     public double getValor() { return valor; }
+    public void setValor(double valor){this.valor = valor;}
     public LocalDateTime getDataPagamento() { return dataPagamento; }
     public void setStatus(StatusPagamento status) { this.status = status; }
     public void setDataPagamento(LocalDateTime dataPagamento) {this.dataPagamento = dataPagamento;}

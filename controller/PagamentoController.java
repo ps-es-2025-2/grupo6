@@ -1,6 +1,5 @@
 package controller;
 
-
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
@@ -16,7 +15,6 @@ import model.enums.StatusPagamento;
 public class PagamentoController implements Initializable {
 
     @FXML private TableView<view.Pagamento> tabela;
-
 
     @FXML private TableColumn<view.Pagamento, String> checkoutCol;
     @FXML private TableColumn<view.Pagamento, String> idCol;
@@ -47,30 +45,51 @@ public class PagamentoController implements Initializable {
         dataCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
         checkoutCol.setCellValueFactory(new PropertyValueFactory<>("checkoutId"));
 
-
         codigoField.setDisable(true);
         valorField.setDisable(true);
 
-        // Listener da tabela
         tabela.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, novo) -> {
             if (novo != null) preencherCampos(novo);
         });
 
-        // Carregar tabela com try/catch
+        // carregamento inicial
+        atualizarTabela();
+
+        // início do auto refresh
+        iniciarAutoRefresh();
+    }
+
+    // --------------------------------------------
+    // NOVO MÉTODO – atualiza a tabela inteira
+    // --------------------------------------------
+    private void atualizarTabela() {
         try {
             tabela.getItems().setAll(
                     repositorio.loadAll().stream().map(this::modelToView).toList()
             );
         } catch (Exception e) {
-            new Alert(Alert.AlertType.ERROR,
-                    "Erro ao carregar a lista de pagamentos:\n" + e.getMessage()).show();
+            System.err.println("Erro ao atualizar tabela: " + e.getMessage());
         }
+    }
+
+    // --------------------------------------------
+    // NOVO MÉTODO – auto refresh a cada 3 segundos
+    // --------------------------------------------
+    private void iniciarAutoRefresh() {
+        javafx.animation.Timeline timeline = new javafx.animation.Timeline(
+                new javafx.animation.KeyFrame(
+                        javafx.util.Duration.seconds(3),
+                        e -> atualizarTabela()
+                )
+        );
+        timeline.setCycleCount(javafx.animation.Animation.INDEFINITE);
+        timeline.play();
     }
 
     private view.Pagamento modelToView(Pagamento entidade) {
 
         int checkoutId = entidade.getCheckout() != null ? entidade.getCheckout().getId() : 0;
-    
+
         return new view.Pagamento(
                 entidade.getId(),
                 entidade.getTipo(),
@@ -80,7 +99,6 @@ public class PagamentoController implements Initializable {
                 checkoutId
         );
     }
-    
 
     private void preencherCampos(view.Pagamento item) {
         try {
@@ -100,37 +118,35 @@ public class PagamentoController implements Initializable {
         }
     }
 
-@FXML
-private void onAtualizarStatus() {
-    if (pagamentoSelecionado == null) {
-        new Alert(Alert.AlertType.WARNING, "Selecione um pagamento.").show();
-        return;
-    }
-
-    try {
-        StatusPagamento novoStatus =
-                statusCheck.isSelected() ? StatusPagamento.APROVADO : StatusPagamento.PENDENTE;
-
-        boolean sucesso = repositorio.updateStatus(pagamentoSelecionado.getId(), novoStatus);
-
-        if (!sucesso) {
-            new Alert(Alert.AlertType.ERROR, "Falha ao atualizar o status no banco.").show();
+    @FXML
+    private void onAtualizarStatus() {
+        if (pagamentoSelecionado == null) {
+            new Alert(Alert.AlertType.WARNING, "Selecione um pagamento.").show();
             return;
         }
 
-        pagamentoSelecionado.setStatus(novoStatus); // Atualiza o objeto em memória
+        try {
+            StatusPagamento novoStatus =
+                    statusCheck.isSelected() ? StatusPagamento.APROVADO : StatusPagamento.PENDENTE;
 
-        tabela.getItems().setAll(
-                repositorio.loadAll().stream().map(this::modelToView).toList()
-        );
+            boolean sucesso = repositorio.updateStatus(pagamentoSelecionado.getId(), novoStatus);
 
-        new Alert(Alert.AlertType.INFORMATION, "Status atualizado com sucesso!").show();
+            if (!sucesso) {
+                new Alert(Alert.AlertType.ERROR, "Falha ao atualizar o status no banco.").show();
+                return;
+            }
 
-    } catch (Exception e) {
-        new Alert(Alert.AlertType.ERROR,
-                "Erro ao atualizar o pagamento:\n" + e.getMessage()).show();
+            pagamentoSelecionado.setStatus(novoStatus);
+
+            atualizarTabela();
+
+            new Alert(Alert.AlertType.INFORMATION, "Status atualizado com sucesso!").show();
+
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR,
+                    "Erro ao atualizar o pagamento:\n" + e.getMessage()).show();
+        }
     }
-}
 
     @FXML
     private void onCancelar() {
