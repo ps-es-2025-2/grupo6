@@ -64,8 +64,38 @@ public class VagaController extends AbstractCrudController<Vaga, view.Vaga, Inte
         super.cancelarButton = cancelarButton;
 
         super.initialize();
+        atualizarTabela();
+
+        // início do auto refresh
+        iniciarAutoRefresh();
     }
 
+    // --------------------------------------------
+    // NOVO MÉTODO – atualiza a tabela inteira
+    // --------------------------------------------
+    private void atualizarTabela() {
+        try {
+            tabela.getItems().setAll(
+                    repositorio.loadAll().stream().map(this::modelToView).toList()
+            );
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar tabela: " + e.getMessage());
+        }
+    }
+
+    // --------------------------------------------
+    // NOVO MÉTODO – auto refresh a cada 3 segundos
+    // --------------------------------------------
+    private void iniciarAutoRefresh() {
+        javafx.animation.Timeline timeline = new javafx.animation.Timeline(
+                new javafx.animation.KeyFrame(
+                        javafx.util.Duration.seconds(3),
+                        e -> atualizarTabela()
+                )
+        );
+        timeline.setCycleCount(javafx.animation.Animation.INDEFINITE);
+        timeline.play();
+    }
     @Override
     protected Repositorio<Vaga, Integer> getRepositorio() {
         return repositorio;

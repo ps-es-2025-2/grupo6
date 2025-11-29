@@ -124,4 +124,3 @@ public class VeiculoController extends AbstractCrudController<Veiculo, view.Veic
         entidade.setPlaca(id);
     }
 }
-

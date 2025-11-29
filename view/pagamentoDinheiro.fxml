@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.PagamentoDinheiroController">
+
+    <center>
+        <GridPane hgap="12" vgap="12" alignment="CENTER">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <Label text="Pagamento em Dinheiro"
+                   GridPane.columnSpan="2"
+                   GridPane.rowIndex="0"
+                   style="-fx-font-size: 20px; -fx-font-weight: bold;"
+                   />
+
+            <!-- Valor da compra -->
+            <Label text="Valor da compra:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="valorPagamentoField"
+                       GridPane.rowIndex="1" GridPane.columnIndex="1"
+                       editable="false"/>
+
+            <!-- Valor recebido -->
+            <Label text="Valor recebido:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="valorRecebidoField"
+                       GridPane.rowIndex="2" GridPane.columnIndex="1"
+                       promptText="Digite o valor recebido"
+                       onKeyReleased="#calcularTroco"/>
+
+            <!-- Troco -->
+            <Label text="Troco:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <TextField fx:id="trocoField"
+                       GridPane.rowIndex="3" GridPane.columnIndex="1"
+                       editable="false"/>
+
+            <!-- Botões -->
+            <HBox spacing="10" alignment="CENTER"
+                  GridPane.columnSpan="2"
+                  GridPane.rowIndex="4">
+                <Button text="Confirmar"
+                        prefWidth="120"
+                        onAction="#confirmarPagamento"/>
+                <Button text="Cancelar"
+                        prefWidth="120"
+                        onAction="#cancelar"/>
+            </HBox>
+
+        </GridPane>
+    </center>
+
+</BorderPane>

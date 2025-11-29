@@ -13,6 +13,7 @@
         <TableView fx:id="tabela" prefHeight="300">
             <columns>
                 <TableColumn fx:id="idCol" text="ID" prefWidth="70"/>
+                <TableColumn fx:id="checkoutCol" text="Checkout ID" prefWidth="100"/>
                 <TableColumn fx:id="tipoCol" text="Tipo" prefWidth="150"/>
                 <TableColumn fx:id="valorCol" text="Valor" prefWidth="120"/>
                 <TableColumn fx:id="statusCol" text="Status" prefWidth="120"/>

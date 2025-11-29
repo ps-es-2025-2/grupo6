@@ -30,7 +30,9 @@ import model.Checkin;
 import model.CheckinRepositorio;
 import model.Checkout;
 import model.CheckoutRepositorio;
+import model.Pagamento;
 import model.Repositorio;
+import model.Repositorios;
 import model.VagaRepositorio;
 
 public class CheckoutController extends AbstractCrudController<Checkout, view.Checkout, Integer> implements Initializable {
@@ -59,6 +61,8 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
 
     // novo campo: pagamento aprovado?
     private boolean pagamentoAprovado = false;
+    private Pagamento pagamentoAprovadoObj;
+
 
     private final CheckoutRepositorio repositorio = model.Repositorios.CHECKOUTS;
     private final CheckinRepositorio checkinRepositorio = model.Repositorios.CHECKINS;
@@ -200,11 +204,16 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
 
     @Override
     protected void beforeCreate(Checkout entidade) throws Exception {
+    
         validarObrigatorios(entidade);
+    
         if (!pagamentoAprovado) {
             throw new IllegalArgumentException("O pagamento ainda não foi aprovado.");
         }
+    
+        // checkout será salvo depois, então nada aqui
     }
+    
 
     @Override
     protected void beforeUpdate(Checkout entidade) throws Exception {
@@ -220,10 +229,25 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
         }
     }
 
-    @Override
-    protected void afterCreate(Checkout entidade) {
-        finalizarCheckin(entidade);
+   @Override
+protected void afterCreate(Checkout checkoutSalvo) {
+
+    try {
+        // vincula o checkout ao pagamento aprovado
+        pagamentoAprovadoObj.setCheckout(checkoutSalvo);
+        pagamentoAprovadoObj.setValor(checkoutSalvo.getValorCalculado());
+
+        // salva pagamento
+        Repositorios.PAGAMENTOS.create(pagamentoAprovadoObj);
+
+    } catch (Exception e) {
+        new Alert(Alert.AlertType.ERROR, "Erro ao salvar pagamento: " + e.getMessage()).show();
     }
+
+    // finalizar vaga/checkin
+    finalizarCheckin(checkoutSalvo);
+}
+
 
     @Override
     protected void afterDelete(Checkout entidade) {
@@ -280,16 +304,13 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/pagamentoCartao.fxml"));
             Parent root = loader.load();
     
-            // Pega o controller da tela de cartão
             PagamentoCartaoController controller = loader.getController();
     
-            // Passa o checkout e o valor
-            controller.receberDados(viewToModel(), calcularValor(checkinCombo.getValue(), resolveDataHora()));
-    
-            // Define o callback: será chamado quando o pagamento terminar
-            controller.setCallbackPagamento(aprovado -> {
-                this.pagamentoAprovado = aprovado;
-                confirmarButton.setDisable(!aprovado);
+            // callback agora recebe objeto pagamento, não boolean
+            controller.setCallbackPagamento(pagamento -> {
+                this.pagamentoAprovado = true;
+                this.pagamentoAprovadoObj = pagamento;
+                confirmarButton.setDisable(false);
             });
     
             Stage stage = new Stage();
@@ -302,17 +323,88 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
             new Alert(Alert.AlertType.ERROR, "Erro ao abrir tela de pagamento: " + e.getMessage()).show();
         }
     }
+
+   private void abrirTelaPagamentoDinheiro() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/pagamentoDinheiro.fxml"));
+        Parent root = loader.load();
+
+        PagamentoDinheiroController controller = loader.getController();
+
+        // 🔥 Calcula o valor da compra
+        double valorCompra = calcularValor(checkinCombo.getValue(), resolveDataHora());
+
+        // 🔥 Envia SOMENTE o valor
+        controller.setValorPagamento(valorCompra);
+
+        // Callback (continua igual)
+        controller.setCallbackPagamento(pagamento -> {
+            this.pagamentoAprovado = true;
+            this.pagamentoAprovadoObj = pagamento;
+            confirmarButton.setDisable(false);
+        });
+
+        Stage stage = new Stage();
+        stage.setTitle("Pagamento - Dinheiro");
+        stage.setScene(new Scene(root));
+        stage.setResizable(false);
+        stage.show();
+
+    } catch (Exception e) {
+        new Alert(Alert.AlertType.ERROR, "Erro ao abrir tela de pagamento: " + e.getMessage()).show();
+    }
+}
+
+    
+private void abrirTelaPagamentoPix() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/pagamentoPix.fxml"));
+        Parent root = loader.load();
+
+        PagamentoPixController controller = loader.getController();
+
+        // 🔥 1 — calcula o valor da compra
+        double valorCompra = calcularValor(checkinCombo.getValue(), resolveDataHora());
+
+        // 🔥 2 — envia o valor para o controller
+        controller.receberDados(valorCompra);
+
+        // 🔥 3 — callback igual aos outros pagamentos
+        controller.setCallbackPagamento(pagamento -> {
+            this.pagamentoAprovado = true;
+            this.pagamentoAprovadoObj = pagamento;
+            confirmarButton.setDisable(false);
+        });
+
+        Stage stage = new Stage();
+        stage.setTitle("Pagamento - Pix");
+        stage.setScene(new Scene(root));
+        stage.setResizable(false);
+        stage.show();
+
+    } catch (Exception e) {
+        new Alert(Alert.AlertType.ERROR, "Erro ao abrir tela de pagamento: " + e.getMessage()).show();
+    }
+}
+
+    
     
 
     @FXML
     private void onFormaPagamentoChanged(ActionEvent event) {
         String selected = formaPagamentoCombo.getValue();
-        if ("Cartão".equals(selected)) abrirTelaPagamentoCartao();
-        else if ("Dinheiro".equals(selected) || "Pix".equals(selected)) {
-            pagamentoAprovado = true;
-            confirmarButton.setDisable(false);
+    
+        if ("Cartão".equals(selected)) {
+            abrirTelaPagamentoCartao();
+        } 
+        else if ("Dinheiro".equals(selected)) {
+            abrirTelaPagamentoDinheiro();
+        } 
+        else if ("Pix".equals(selected)) {
+            abrirTelaPagamentoPix();
         }
     }
+    
 
     // 🔥 chamado pela tela de pagamento
    public void onPagamentoConcluido(boolean aprovado) {
