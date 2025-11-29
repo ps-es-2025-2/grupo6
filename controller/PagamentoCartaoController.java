@@ -25,9 +25,9 @@ public class PagamentoCartaoController {
     private double valor;
 
     // callback para o CheckoutController
-    private java.util.function.Consumer<Boolean> callbackPagamento;
+    private java.util.function.Consumer<PagamentoCartao> callbackPagamento;
 
-    public void setCallbackPagamento(java.util.function.Consumer<Boolean> callback) {
+    public void setCallbackPagamento(java.util.function.Consumer<PagamentoCartao> callback) {
         this.callbackPagamento = callback;
     }
 
@@ -44,44 +44,33 @@ public class PagamentoCartaoController {
             return;
         }
 
+        // cria pagamento sem checkout ainda
         pagamentoCartao = new PagamentoCartao(
-                checkout,
-                valor,
+                null, // checkout será definido depois!
+                0,    // valor será atribuído pelo CheckoutController
                 numero,
                 nome,
                 validade,
                 cvv
         );
 
-        // PROCESSA pagamento via serviço
         boolean aprovado = servicoPagamento.realizarPagamento(pagamentoCartao);
-
-        // ATUALIZA status
         pagamentoCartao.setStatus(
                 aprovado ? StatusPagamento.APROVADO : StatusPagamento.RECUSADO
         );
 
-        // SALVA no banco (somente dados permitidos do Pagamento)
-        try {
-            Repositorios.PAGAMENTOS.create(pagamentoCartao);
-        } catch (Exception e) {
-            new Alert(Alert.AlertType.ERROR, "Erro ao salvar pagamento: " + e.getMessage()).show();
+        if (!aprovado) {
+            new Alert(Alert.AlertType.ERROR, "Pagamento recusado. Tente novamente.").show();
             return;
         }
 
-        // FEEDBACK AO USUÁRIO
-        if (aprovado) {
-            new Alert(Alert.AlertType.INFORMATION, "Pagamento aprovado!").show();
-        } else {
-            new Alert(Alert.AlertType.ERROR, "Pagamento recusado. Tente novamente.").show();
-        }
+        new Alert(Alert.AlertType.INFORMATION, "Pagamento aprovado!").show();
 
-        // callback para CheckoutController atualizar UI
+        // callback retorna o objeto do pagamento
         if (callbackPagamento != null) {
-            callbackPagamento.accept(aprovado);
+            callbackPagamento.accept(pagamentoCartao);
         }
 
-        // fecha a janela
         Stage stage = (Stage) numeroCartaoField.getScene().getWindow();
         stage.close();
     }

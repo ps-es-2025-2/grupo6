@@ -1,5 +1,6 @@
 package controller;
 
+
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
@@ -16,6 +17,8 @@ public class PagamentoController implements Initializable {
 
     @FXML private TableView<view.Pagamento> tabela;
 
+
+    @FXML private TableColumn<view.Pagamento, String> checkoutCol;
     @FXML private TableColumn<view.Pagamento, String> idCol;
     @FXML private TableColumn<view.Pagamento, String> tipoCol;
     @FXML private TableColumn<view.Pagamento, String> valorCol;
@@ -42,6 +45,8 @@ public class PagamentoController implements Initializable {
         valorCol.setCellValueFactory(new PropertyValueFactory<>("valor"));
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
         dataCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
+        checkoutCol.setCellValueFactory(new PropertyValueFactory<>("checkoutId"));
+
 
         codigoField.setDisable(true);
         valorField.setDisable(true);
@@ -63,14 +68,19 @@ public class PagamentoController implements Initializable {
     }
 
     private view.Pagamento modelToView(Pagamento entidade) {
+
+        int checkoutId = entidade.getCheckout() != null ? entidade.getCheckout().getId() : 0;
+    
         return new view.Pagamento(
                 entidade.getId(),
                 entidade.getTipo(),
                 String.format("R$ %.2f", entidade.getValor()),
                 entidade.getStatus().name(),
-                entidade.getDataPagamento().format(fmt)
+                entidade.getDataPagamento().format(fmt),
+                checkoutId
         );
     }
+    
 
     private void preencherCampos(view.Pagamento item) {
         try {

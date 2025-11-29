@@ -79,4 +79,8 @@ public class PagamentoCartao extends Pagamento {
     
     public String getUltimos4() { return ultimos4; }
     public String getBandeira() { return bandeira; }
+
+    public void setValor(double valorCalculado) {
+       this.valor = valorCalculado;
+    }
 }
