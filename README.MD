@@ -3,11 +3,10 @@
 
 SOBRE O PROJETO
 ---------------
-EasyStop é uma aplicação desktop JavaFX estruturada em arquitetura MVC completa,
-com formulários FXML prontos para Scene Builder e persistência em SQLite via
-ORMLite. O sistema cobre todo o ciclo operacional de um estacionamento:
-cadastro de veículos, administração de vagas, check-in, checkout e registro de
-pagamentos.
+EasyStop é uma aplicação desktop desenvolvida em JavaFX, estruturada com uma arquitetura MVC completa, utilizando FXML para a camada de visualização e totalmente compatível com o Scene Builder.
+A persistência dos dados é realizada por meio do SQLite, integrado via ORMLite, garantindo leveza, portabilidade e eficiência no armazenamento local.
+
+A aplicação foi projetada para contemplar todas as etapas do fluxo operacional de um estacionamento, oferecendo uma interface clara, responsiva e estilizada através de CSS personalizado.
 
 PILHA TECNOLÓGICA
 -----------------
@@ -98,6 +97,9 @@ TUTORIAL PASSO A PASSO
 
 DETALHES ARQUITETURAIS
 ----------------------
+
+
+
 - Controllers convertem entidades ↔ view-models garantindo TableViews reativas.
 - `AbstractCrudController` padroniza botões, estados e carregamento inicial.
 - Regras como bloqueio/liberação de vagas e cálculo do valor/hora ficam nas
