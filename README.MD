@@ -19,6 +19,8 @@ ESTRUTURA DE PASTAS
 -------------------
 - `model/`          → Entidades ORMLite, repositórios e acesso ao banco.
 - `view/`           → View-models (JavaFX Properties), FXML e `AppView`.
+  - `view/components/` → Componentes UI reutilizáveis (Componentização)
+  - `view/styles/`     → Stylesheets CSS (Apresentação visual)
 - `controller/`     → Controllers concretos herdando de `AbstractCrudController`.
 - `database/`       → Scripts SQL (`database/easystop_schema.sql`).
 - `docs/`           → Documentação e diagrama UML (`docs/easystop-uml.md`).
@@ -26,7 +28,7 @@ ESTRUTURA DE PASTAS
 COMO EXECUTAR
 -------------
 
-### 1️⃣ Pré-requisitos
+### Pré-requisitos
 
 Antes de rodar o EasyStop, você precisa instalar e configurar algumas ferramentas:
 
@@ -55,7 +57,7 @@ O EasyStop utiliza ORMLite para persistência de dados e SQLite como banco de da
 2. Clique em **Adicionar** e selecione os JARs baixados  
 3. Reinicie o BlueJ
 
-### 2️⃣ Clonando o Projeto do GitHub
+### Clonando o Projeto do GitHub
 
 Para obter a versão mais recente do EasyStop:
 
@@ -67,19 +69,20 @@ Para obter a versão mais recente do EasyStop:
    git clone https://github.com/abraao8401/EasyStop.git
 
 
-### 3️⃣  Configuração do Banco de Dados
+### Configuração do Banco de Dados
 
 O EasyStop utiliza SQLite, que cria um arquivo `.db` local automaticamente.
 
 - Nenhuma instalação adicional é necessária.  
 - O arquivo `easystop.db` será criado na primeira execução do projeto.
 
-### 4️⃣ Executando o Projeto
+### Executando o Projeto
 
-1. Abra o BlueJ e carregue o projeto EasyStop.  
-2. Compile todas as classes (`Compile All`).  
-3. Execute a classe principal:`view.AppView`.  
-4. O JavaFX carregará a interface com abas para Veículos, Vagas, Check-in, Checkout e Pagamentos.
+1. Abra o BlueJ e carregue o projeto EasyStop (pasta `grupo6`).  
+2. Clique com botão direito em **`AppView`** (na pasta `view`) → **`void main(String[] args)`** → **OK**.  
+3. O BlueJ compilará automaticamente e o JavaFX carregará a interface com abas para Veículos, Vagas, Check-in, Checkout e Pagamentos.
+
+Para instruções detalhadas, veja: `COMO-RODAR.md` ou `INICIO-RAPIDO.md`
 
 TUTORIAL PASSO A PASSO
 ----------------------
@@ -98,9 +101,21 @@ TUTORIAL PASSO A PASSO
 DETALHES ARQUITETURAIS
 ----------------------
 
-
-
 - Controllers convertem entidades ↔ view-models garantindo TableViews reativas.
 - `AbstractCrudController` padroniza botões, estados e carregamento inicial.
 - Regras como bloqueio/liberação de vagas e cálculo do valor/hora ficam nas
   camadas de model/repositorio.
+
+**Componentização (Front-end):**
+- Componentes reutilizáveis em `view/components/` aplicando padrões de design:
+  - Component Pattern: Interface `UIComponent` para tratamento uniforme
+  - Composite Pattern: `ActionButtonBar`, `CrudTableLayout`
+  - Factory Method: `ComponentFactory` para criação de componentes
+  - Builder Pattern: `FormBuilder` para construção de formulários
+  - Template Method: `CrudTableLayout` define estrutura comum CRUD
+- CSS em `view/styles/` para estilização visual (camada View).
+- Separação clara de responsabilidades: Componentes (apresentação) vs Controllers (lógica).
+
+**Documentação:**
+- `docs/component-architecture.md` - Arquitetura de componentes e padrões de design
+- `docs/css-architecture.md` - Arquitetura CSS e responsabilidades

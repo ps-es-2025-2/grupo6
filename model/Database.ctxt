@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=Database
-comment0.text=\n\ Encapsula\ o\ acesso\ ao\ banco\ de\ dados\ permitindo\ alternar\ entre\ SQLite\ e\ MariaDB\n\ apenas\ alterando\ a\ URL\ de\ conex\u00E3o.\ Para\ SQLite\ utilize\ o\ formato\:\n\ jdbc\:sqlite\:caminho/do/arquivo.db\n\ Para\ MariaDB\ utilize\:\n\ jdbc\:mariadb\://host\:porta/banco\n
+comment0.text=\r\n\ Encapsula\ o\ acesso\ ao\ banco\ de\ dados\ permitindo\ alternar\ entre\ SQLite\ e\ MariaDB\r\n\ apenas\ alterando\ a\ URL\ de\ conex\u00E3o.\ Para\ SQLite\ utilize\ o\ formato\:\r\n\ jdbc\:sqlite\:caminho/do/arquivo.db\r\n\ Para\ MariaDB\ utilize\:\r\n\ jdbc\:mariadb\://host\:porta/banco\r\n
 comment1.params=jdbcUrl
 comment1.target=Database(java.lang.String)
 comment2.params=jdbcUrl\ username\ password
