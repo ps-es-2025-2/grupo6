@@ -5,6 +5,7 @@
 #  **EasyStop MVP**
 
 Escrito por: Thâmara
+Editado por: Luiz Felipe Pires
 
 ## 1\. Introdução
 
@@ -19,6 +20,10 @@ O EasyStop MVP focará nas funcionalidades essenciais para operação básica de
 * Controle de vagas disponíveis e ocupadas  
 * Geração de relatórios básicos de gestão  
 * Sistema de alertas de capacidade
+* Controle de formas de pagamento (Cartão, Dinheiro, PIX) com validações específicas
+* Sistema de finalização automática de check-ins via checkout
+* Interface gráfica completa para todas as operações
+* Atualização em tempo real do status de vagas e pagamentos
 
 ## 3\. Casos de Uso Principais
 
@@ -29,17 +34,21 @@ O EasyStop MVP focará nas funcionalidades essenciais para operação básica de
 *public interface ICheckinService {*  
     *CheckinResponse realizarCheckin(CheckinRequest request);*  
 *}*  
-Interfaces de Suporte:  
+Interfaces de Suporte:
+* VeiculoRepository - Busca e gerencia veículos cadastrados
+* VagaRepository - Atualiza status de ocupação da vaga  
 *IVagaRepository* \- Busca vagas disponíveis  
 *IRegistroRepository* \- Persiste registros de entrada  
 *IValidadorPlaca* \- Valida formato da placa  
 *IValidadorHorario* \- Valida horário de entrada  
 Fluxo:
 
-1. Atendente submete placa e horário via frontend  
-2. Frontend chama ICheckinService.realizarCheckin()  
-3. Serviço coordena validações e persistência através das interfaces especializadas  
-4. Sistema retorna vaga sugerida
+1. Usuário seleciona veículo cadastrado ou cadastra novo veículo
+2. Sistema valida se veículo não possui check-in ativo
+3. Usuário seleciona vaga disponível da lista
+4. Sistema valida horário de entrada (formato e consistência)
+5. Sistema persiste check-in e marca vaga como ocupada
+6. Interface é atualizada refletindo nova ocupação
 
 ---
 
@@ -56,20 +65,41 @@ Interfaces de Suporte:
 * IRegistroRepository \- Busca registro de entrada  
 * IVagaRepository \- Libera vaga ocupada  
 * IRelogioSistema \- Fornece horário atual para cálculo
+* CheckinRepository - Busca check-ins ativos e atualiza status
+* ServicoPagamento - Coordena processamento do pagamento
+
+Fluxo:
+1. Usuário seleciona check-in ativo para checkout
+2. Sistema calcula valor baseado em:
+   - Tempo de permanência (mínimo 60 minutos)
+   - Valor por hora configurável
+   - Horário de saída (com validação de formato)
+3. Sistema direciona para fluxo de pagamento
+4. Após pagamento aprovado, sistema:
+   - Marca check-in como finalizado
+   - Libera vaga associada
+   - Registra checkout completo
 
 ---
 
-### UC-03: Registrar Pagamento
+### *UC-03: Processar Pagamento*
 
-Interface Principal: IPagamentoService  
-*java*  
-*public interface IPagamentoService {*  
-*void registrarPagamento(Long registroId, FormaPagamento formaPagamento);*  
-*}*  
+Interface Principal: ServicoPagamento
+*java*
+*public class ServicoPagamento {*
+    *boolean realizarPagamento(Pagamento pagamento);*
+*}*
 Interfaces de Suporte:
+* PagamentoCartao, PagamentoDinheiro, PagamentoPix - Implementações específicas
+* PagamentoRepository - Persiste resultado do pagamento
 
-* IRegistroRepository \- Atualiza status do registro  
-* IProcessadorPagamento \- Executa regras específicas por forma de pagamento
+Fluxo:
+1. Sistema direciona para interface específica do tipo de pagamento selecionado
+2. *Cartão:* Valida número (16 dígitos), CVV (3 dígitos), validade (MM/AA)
+3. *Dinheiro:* Valida valor recebido ≥ valor devido, calcula troco
+4. *PIX:* Gera código fictício e valida presença
+5. Após aprovação, sistema atualiza status do pagamento
+6. CheckoutController é notificado para completar o checkout
 
 ---
 
@@ -101,6 +131,25 @@ Interfaces de Suporte:
 * IRegistroRepository \- Fornece dados históricos  
 * ICalculadoraMetricas \- Calcula médias e estatísticas
 
+### 4\. Arquitetura e Implementação
+
+###Padrões Arquiteturais:
+* MVC (Model-View-Controller) com JavaFX
+* Repository Pattern para acesso a dados
+* Injeção de dependência simplificada
+* Polimorfismo para processamento de pagamentos
+
+###Componentes Principais:
+* AbstractCrudController - Base reutilizável para operações CRUD
+* Database - Gerenciador centralizado de conexão SQLite
+* Repositorios - Factory estático para todos os repositórios
+* Entidades ORMLite com mapeamento objeto-relacional
+
+###Fluxo de Dados:
+* Check-in → Ocupa vaga → Checkout → Processa pagamento → Libera vaga
+* Estado consistente mantido através de transações de banco de dados
+* Validações em múltiplas camadas (UI, negócio, persistência)
+
 ## 5\. Benefícios desta Abordagem
 
 ### Para Desenvolvedores:
@@ -114,6 +163,20 @@ Interfaces de Suporte:
 * Desenvolvimento Paralelo: Múltiplos desenvolvedores podem trabalhar em interfaces diferentes  
 * Integração Simplificada: Contratos bem definidos entre módulos  
 * Reuso: Interfaces especializadas podem ser compostas em novos serviços
+
+### *Benefícios da Implementação:*
+
+*Para a Manutenção:*
+* Base de código coesa com separação clara de responsabilidades
+* Hooks (before/after) para extensão de funcionalidades
+* Tratamento consistente de erros e validações
+* Auto-refresh para dados em tempo real
+
+*Para a Experiência do Usuário:*
+* Interface intuitiva com feedback imediato
+* Fluxos guiados para operações complexas
+* Prevenção de erros através de validações proativas
+* Status visual claro para vagas e pagamentos
 
 ## 6\. Exemplo de Implementação
 
