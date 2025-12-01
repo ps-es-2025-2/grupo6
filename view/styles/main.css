@@ -1,0 +1,339 @@
+/* ============================================
+   EasyStop - Stylesheet Principal
+   Arquitetura: Camada View (MVC)
+   ============================================ */
+
+/* ===== VARIÁVEIS CSS (Cores e Tema) ===== */
+.root {
+    /* Cores Principais */
+    -fx-primary-color: #2C3E50;
+    -fx-secondary-color: #3498DB;
+    -fx-accent-color: #E74C3C;
+    -fx-success-color: #27AE60;
+    -fx-warning-color: #F39C12;
+    
+    /* Cores de Fundo */
+    -fx-background-color: #ECF0F1;
+    -fx-base: #FFFFFF;
+    
+    /* Cores de Texto */
+    -fx-text-fill: #2C3E50;
+    -fx-text-secondary: #7F8C8D;
+    
+    /* Espaçamentos */
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+}
+
+/* ===== ESTILIZAÇÃO DO TABPANE ===== */
+.tab-pane {
+    -fx-tab-min-width: 120px;
+    -fx-tab-max-width: 200px;
+}
+
+.tab-pane .tab {
+    -fx-background-color: #BDC3C7;
+    -fx-background-radius: 5px 5px 0px 0px;
+    -fx-padding: 10px 20px;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.tab-pane .tab:hover {
+    -fx-background-color: #95A5A6;
+}
+
+.tab-pane .tab:selected:hover {
+    -fx-background-color: #2980B9;
+}
+
+/* ===== ESTILIZAÇÃO DE TABELAS ===== */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #BDC3C7;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #34495E;
+    -fx-background-radius: 5px 5px 0px 0px;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #F8F9FA;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #EBF5FB;
+}
+
+.table-row-cell:selected:hover {
+    -fx-background-color: #2980B9;
+}
+
+/* ===== ESTILIZAÇÃO DE BOTÕES ===== */
+.button {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.button:hover {
+    -fx-background-color: #2980B9;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 8, 0, 0, 3);
+}
+
+.button:pressed {
+    -fx-background-color: #21618C;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 3, 0, 0, 1);
+}
+
+.button:disabled {
+    -fx-background-color: #BDC3C7;
+    -fx-text-fill: #7F8C8D;
+    -fx-cursor: default;
+    -fx-effect: none;
+}
+
+/* Botões de Ação Específicos */
+#adicionarButton {
+    -fx-background-color: #27AE60;
+}
+
+#adicionarButton:hover {
+    -fx-background-color: #229954;
+}
+
+#adicionarButton:disabled {
+    -fx-background-color: #BDC3C7;
+    -fx-text-fill: #7F8C8D;
+    -fx-cursor: default;
+    -fx-effect: none;
+}
+
+#atualizarButton {
+    -fx-background-color: #F39C12;
+}
+
+#atualizarButton:hover {
+    -fx-background-color: #E67E22;
+}
+
+#atualizarButton:disabled {
+    -fx-background-color: #BDC3C7;
+    -fx-text-fill: #7F8C8D;
+    -fx-cursor: default;
+    -fx-effect: none;
+}
+
+#deletarButton {
+    -fx-background-color: #E74C3C;
+}
+
+#deletarButton:hover {
+    -fx-background-color: #C0392B;
+}
+
+#deletarButton:disabled {
+    -fx-background-color: #BDC3C7;
+    -fx-text-fill: #7F8C8D;
+    -fx-cursor: default;
+    -fx-effect: none;
+}
+
+#confirmarButton {
+    -fx-background-color: #27AE60;
+}
+
+#confirmarButton:hover {
+    -fx-background-color: #229954;
+}
+
+#confirmarButton:disabled {
+    -fx-background-color: #BDC3C7;
+    -fx-text-fill: #7F8C8D;
+    -fx-cursor: default;
+    -fx-effect: none;
+}
+
+#cancelarButton {
+    -fx-background-color: #95A5A6;
+}
+
+#cancelarButton:hover {
+    -fx-background-color: #7F8C8D;
+}
+
+#cancelarButton:disabled {
+    -fx-background-color: #BDC3C7;
+    -fx-text-fill: #7F8C8D;
+    -fx-cursor: default;
+    -fx-effect: none;
+}
+
+/* ===== ESTILIZAÇÃO DE CAMPOS DE TEXTO ===== */
+.text-field, .text-area, .combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #BDC3C7;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused, .text-area:focused, .combo-box:focused {
+    -fx-border-color: #3498DB;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(52, 152, 219, 0.3), 5, 0, 0, 0);
+}
+
+.text-field:disabled, .text-area:disabled, .combo-box:disabled {
+    -fx-background-color: #ECF0F1;
+    -fx-text-fill: #7F8C8D;
+    -fx-border-color: #D5DBDB;
+}
+
+/* ===== ESTILIZAÇÃO DE LABELS ===== */
+.label {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.label:required {
+    -fx-text-fill: #E74C3C;
+    -fx-font-weight: bold;
+}
+
+/* ===== ESTILIZAÇÃO DE GRIDPANE ===== */
+.grid-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 15px;
+}
+
+/* ===== ESTILIZAÇÃO DE BORDERPANE ===== */
+.border-pane {
+    -fx-background-color: white;
+    -fx-padding: 10px;
+}
+
+/* ===== ESTILIZAÇÃO DE DATE PICKER ===== */
+.date-picker {
+    -fx-background-color: white;
+    -fx-border-color: #BDC3C7;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+}
+
+.date-picker:focused {
+    -fx-border-color: #3498DB;
+    -fx-border-width: 2px;
+}
+
+/* ===== ESTILIZAÇÃO DE COMBO BOX ===== */
+.combo-box .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #BDC3C7;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: #EBF5FB;
+}
+
+.combo-box .list-cell:selected {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+}
+
+/* ===== ESTILIZAÇÃO DE TEXT AREA ===== */
+.text-area {
+    -fx-background-color: white;
+    -fx-border-color: #BDC3C7;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .content {
+    -fx-background-color: transparent;
+}
+
+/* ===== ESTILIZAÇÃO DE HBOX/VBOX ===== */
+.hbox, .vbox {
+    -fx-spacing: 10px;
+    -fx-padding: 10px;
+}
+
+/* ===== ESTILIZAÇÃO DE ANCHOR PANE ===== */
+.anchor-pane {
+    -fx-background-color: #ECF0F1;
+}
+
+/* ===== CLASSES UTILITÁRIAS ===== */
+.success-message {
+    -fx-text-fill: #27AE60;
+    -fx-font-weight: bold;
+}
+
+.error-message {
+    -fx-text-fill: #E74C3C;
+    -fx-font-weight: bold;
+}
+
+.warning-message {
+    -fx-text-fill: #F39C12;
+    -fx-font-weight: bold;
+}
+
+.info-message {
+    -fx-text-fill: #3498DB;
+    -fx-font-weight: bold;
+}
+
+/* ===== RESPONSIVIDADE E ANIMAÇÕES ===== */
+.button {
+    -fx-transition: all 0.3s ease;
+}
+
+.table-row-cell {
+    -fx-transition: background-color 0.2s ease;
+}
+

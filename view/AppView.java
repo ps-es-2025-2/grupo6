@@ -16,6 +16,12 @@ public class AppView extends Application {
             URL url = new File("view/app.fxml").toURI().toURL();
             Pane pane = FXMLLoader.load(url);
             Scene scene = new Scene(pane);
+            
+            // Carrega o stylesheet principal da aplicação
+            // CSS faz parte da camada View (MVC) - responsável pela apresentação visual
+            URL cssUrl = new File("view/styles/main.css").toURI().toURL();
+            scene.getStylesheets().add(cssUrl.toExternalForm());
+            
             primaryStage.setScene(scene);
             primaryStage.setTitle("EasyStop - Gestão de Estacionamento");
             primaryStage.show();
