@@ -1,0 +1,188 @@
+# Prioridades para o MVP
+
+- Registro de entrada (check-in) e saída (check-out) de veículos.  
+- Cálculo automático do valor com base no tempo, em minutos.  
+- Controle de vagas disponíveis e ocupadas, com aviso de lotação.  
+- Registro da placa do veículo manual pelo atendente.  
+- Relatórios básicos (faturamento diário, tempo médio de permanência, picos de ocupação).  
+
+## Fluxo de atividades
+- Com a chegada do cliente, o atendente deve recolher os dados de **Placa** e **Horário de entrada** do carro, informar ao sistema e esperar que o mesmo retorne uma vaga sugerida por meio de um mapa na tela do atendente. O atendente deve então recolher a vaga ocupada pelo cliente.  
+- Quando o cliente for sair, o atendente deve recolher somente a placa para que o sistema gere a fatura, libere a vaga e salve o tempo de permanência e alimente os logs de pico, de frequência de clientes e de tempo médio de permanência.  
+- Realizado esse check-out é necessário que o atendente apresente as formas de pagamento ao cliente, calculada por minutos de permanência, receba a forma de pagamento preferida pelo cliente e libere a saída do mesmo.  
+- Também é interessante que o sistema avise quando o estacionamento estiver quase cheio (85% da capacidade máxima).  
+- Os logs devem conter o histórico de carros diários, a frequência dos clientes, os horários de pico e o tempo médio de permanência do dia.  
+
+---
+
+# EasyStop: Épicos e Histórias de Usuário (H.U.s)
+
+## Épico: Registro de Entrada e Saída de Veículos
+- **HU-01: Registrar check-in**  
+  Como atendente, quero registrar a entrada de um veículo informando placa, horário e indicar a vaga selecionada pelo cliente, para iniciar o controle de permanência e reservar a vaga de forma rápida.  
+
+- **HU-02: Check-out com cálculo automático**  
+  Como atendente, quero registrar a saída (check-out) informando somente a placa, para que o sistema calcule automaticamente a fatura com base no tempo de permanência em minutos e libere a vaga ocupada.  
+
+- **HU-03: Pagamento no caixa**  
+  Como atendente, quero registrar o pagamento recebido no caixa após o check-out, para manter o controle de faturamento e encerrar o atendimento do cliente.  
+
+## Épico: Visualização e Orientação de Vagas
+- **HU-04: Visualizar mapa simples do estacionamento**  
+  Como atendente, quero ver no aplicativo um mapa básico das vagas disponíveis e ocupadas, para orientar o cliente até a vaga sugerida de forma clara e eficiente.  
+
+- **HU-05: Sugerir vaga automaticamente**  
+  Como atendente, quero que o sistema aponte uma vaga livre logo após registrar o check-in, para otimizar o uso do espaço e reduzir o tempo de atendimento.  
+
+## Épico: Controle de Vagas e Alertas de Lotação
+- **HU-06: Monitorar vagas disponíveis**  
+  Como atendente, quero acompanhar em tempo real o número de vagas livres e ocupadas, para saber quando o estacionamento está próximo da lotação máxima.  
+
+- **HU-07: Aviso de lotação**  
+  Como atendente, quero receber um alerta no app quando restarem poucas vagas, para informar os clientes antes de completar a capacidade.  
+
+## Épico: Relatórios e Métricas
+- **HU-08: Relatório de faturamento diário**  
+  Como gestor, quero gerar um relatório diário de faturamento, para acompanhar a receita e verificar o desempenho financeiro.  
+
+- **HU-09: Tempo médio de permanência**  
+  Como gestor, quero consultar o tempo médio de permanência dos veículos, para avaliar padrões de uso e planejar melhorias.  
+
+- **HU-10: Picos de ocupação**  
+  Como gestor, quero visualizar os horários de pico de ocupação, para alocar melhor a equipe e ajustar horários de maior demanda.  
+
+- **HU-11: Histórico e frequência de clientes**  
+  Como gestor, quero acessar o histórico diário de carros e a frequência de cada placa, para identificar clientes recorrentes e oportunidades de fidelização.  
+
+---
+
+# EasyStop: Requisitos Funcionais
+
+## RF-1 – Check-in e Sugestão de Vaga Automática
+**Descrição:**  
+Quando o atendente registra placa e horário de entrada, o EasyStop deve identificar e destacar a vaga mais adequada num mapa interativo, otimizando a alocação de espaço e reduzindo tempo de atendimento.  
+
+**Atores:** Atendente, Sistema EasyStop  
+**Pré-condições:** Existe ao menos uma vaga livre no estacionamento.  
+**Pós-condições:**  
+- A vaga sugerida fica reservada em “Em uso” até a confirmação do cliente.  
+- O contador de vagas livres e ocupadas é atualizado.  
+
+**Fluxo Principal:**  
+1. Atendente preenche placa e horário de entrada.  
+2. Sistema executa algoritmos de priorização (proximidade, zonas preferenciais).  
+3. O sistema realça a vaga sugerida no mapa em cor diferenciada.  
+4. O atendente visualiza a sugestão e confirma a reserva.  
+
+**Fluxos Alternativos:**  
+- 1a. Se o atendente informar um horário inválido (data futura), exibir: ”Horário inválido.”  
+- 1b. Se a placa já constar em uma vaga "Em uso", exibir: "Veículo já está estacionado.”  
+- 3a. Se não houver vaga, exibir: “Estacionamento cheio”.  
+- 4a. Se o cliente recusar a vaga sugerida, o atendente pode sobrescrever a sugestão e selecionar outra vaga manualmente.  
+
+**Critérios de Aceitação:**  
+- O mapa deve atualizar em até 1 segundo após o check-in.  
+- A vaga sugerida aparece em destaque e é bloqueada.  
+- Mensagem de erro exibida se não houver vagas disponíveis.  
+**Prioridade:** Alta  
+
+---
+
+## RF-2 – Check-out e Geração de Fatura
+**Descrição:**  
+Quando o atendente informa a placa para iniciar o check-out, o EasyStop deve calcular o tempo de permanência em minutos, aplicar a tarifa configurada e gerar automaticamente a fatura.  
+
+**Atores:** Atendente, Sistema EasyStop  
+**Pré-condições:**  
+- Veículo registrado em uma vaga “Em uso”.  
+- Tarifas configuradas.  
+
+**Pós-condições:**  
+- Fatura exibida para o atendente.  
+- Vaga liberada.  
+- Contador de vagas atualizado.  
+
+**Fluxo Principal:**  
+1. Atendente informa a placa.  
+2. Sistema busca o registro de check-in.  
+3. Sistema calcula o tempo em minutos.  
+4. Sistema aplica a tarifa vigente.  
+5. Sistema gera e exibe a fatura.  
+6. Atendente confirma.  
+
+**Fluxos Alternativos:**  
+- 1a. Placa inválida → “Placa não encontrada.”  
+- 3a. Horário inconsistente → “Erro ao realizar o check-out.”  
+- 4a. Tarifa não configurada → “Tarifa não definida.”  
+- 5a. Fatura em aberto → “Veículo com fatura em aberto.”  
+
+**Critérios de Aceitação:**  
+- Cálculo de tempo e tarifa em até 1 segundo.  
+- Fatura detalhada.  
+- Vaga liberada automaticamente.  
+**Prioridade:** Alta  
+
+---
+
+## RF-3 – Pagamento e Encerramento de Atendimento
+**Descrição:**  
+Após exibir a fatura, o EasyStop deve apresentar formas de pagamento, registrar o método escolhido, confirmar o recebimento e encerrar o atendimento gravando a transação.  
+
+**Atores:** Atendente, Cliente, Sistema EasyStop  
+
+**Fluxo Principal:**  
+1. Sistema exibe opções de pagamento.  
+2. Atendente seleciona método.  
+3. Atendente confirma recebimento.  
+4. Sistema valida e atualiza status para “Concluído”.  
+5. Sistema grava a transação.  
+
+**Fluxos Alternativos:**  
+- 2a. Método indisponível → voltar ao passo 1.  
+- 2b. Cliente muda de ideia → cancelar operação e retornar.  
+- 3a. Valor incorreto → exibir aviso e permitir ajuste.  
+- 3b. Troco automático para pagamentos em dinheiro.  
+- 4a. Falha no pagamento → exibir erro e registrar log.  
+- 4b. Cliente pede recibo → permitir impressão ou envio.  
+
+**Critérios de Aceitação:**  
+- Resposta até 1 segundo.  
+- Registro completo sem perda de dados.  
+- Mensagens claras em erros.  
+**Prioridade:** Alta  
+
+---
+
+## RF-4 – Alertas de Lotação
+**Descrição:**  
+O sistema deve monitorar a ocupação e disparar alertas quando o uso atingir 85%.  
+
+**Critérios de Aceitação:**  
+- Alertas em até 1 segundo.  
+- Desativação automática abaixo de 85%.  
+- Bloqueio de check-in em 100%.  
+**Prioridade:** Média  
+
+---
+
+## RF-5 – Logs e Métricas
+**Descrição:**  
+O sistema deve registrar logs de cada check-in/check-out e gerar métricas diárias (histórico, frequência, picos, tempo médio).  
+
+**Critérios de Aceitação:**  
+- Gravação em até 500 ms.  
+- Processamento concluído antes do próximo dia útil.  
+- Exportação CSV/PDF.  
+**Prioridade:** Média  
+
+---
+
+# EasyStop: Requisitos Não Funcionais
+
+- **RNF-1. Desempenho:** Resposta ≤ 2s com até 100 usuários simultâneos.  
+- **RNF-2. Disponibilidade:** 99,5% mensal.  
+- **RNF-3. Usabilidade:** Fluxo concluído em até 30s.  
+- **RNF-4. Segurança:** Criptografia + auditoria completa.  
+- **RNF-5. Escalabilidade:** Suporte a até 1.000 vagas.  
+- **RNF-6. Confiabilidade de Dados:** Backup diário + retenção de 30 dias.  
+- **RNF-7. Compatibilidade:** Compatível com Chrome, Edge, Firefox + design responsivo.  
