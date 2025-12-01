@@ -1,91 +1,210 @@
 # Documento de Visão – EasyStop
 
 ## 1. Introdução
-O **EasyStop** é um sistema inteligente de gestão de estacionamento que visa otimizar o controle de entrada e saída de veículos, a alocação de vagas por meio de sugestões de vagas livres, o faturamento e a geração de relatórios operacionais.  
+O **EasyStop** é um sistema inteligente de gestão de estacionamento, desenvolvido em JavaFX, estruturado em arquitetura MVC e integrado ao banco de dados SQLite por meio do ORMLite.
+
+O sistema automatiza o controle de veículos, check-ins, checkouts, ocupação de vagas e pagamentos, oferecendo mais agilidade, precisão operacional e rastreabilidade.  
 
 Este documento apresenta a visão geral do sistema, resumindo seus objetivos, suas funcionalidades principais, seus principais usuários envolvidos e os requisitos essenciais.
 
 ---
 
 ## 2. Objetivo
-O objetivo do **EasyStop** é automatizar e agilizar o processo de atendimento em estacionamentos, oferecendo aos atendentes e aos administradores ferramentas para:  
+O objetivo do **EasyStop**é fornecer uma solução simples, robusta e eficiente para o gerenciamento diário de um estacionamento, permitindo:
 
-- Registro rápido de entrada e saída.  
-- Sugestão inteligente de vagas.  
-- Controle e alerta de ocupação.  
-- Geração de métricas operacionais e financeiras.  
+Entrada e saída rápida e simplificada de veículos.
+
+Controle automático e manual de ocupação de vagas.
+
+Organização do fluxo operacional (check-in, checkout e pagamento).
+
+Registro confiável de dados para auditoria e relatórios.
+
+Interface amigável, responsiva e estilizada com CSS.
+
+Diferente de soluções web, o EasyStop foi projetado para uso offline, garantindo funcionamento estável mesmo sem internet.
 
 ---
 
 ## 3. Escopo
-O EasyStop contempla os seguintes módulos:  
+O EasyStop cobre todo o ciclo operacional de um estacionamento, incluindo:
 
-- Registro de entrada e saída de veículos.  
-- Sugestão automática de vagas.  
-- Visualização de mapa sugestivo de vagas disponíveis.  
-- Controle de ocupação e alertas de lotação.  
-- Registro de pagamentos e encerramento de atendimento.  
-- Geração de relatórios e exportação de métricas.  
-- Monitoramento de histórico e frequência de clientes.  
+- Cadastro e gerenciamento de veículos.
+- Administração de vagas (livres/ocupadas/em manutenção).
+- Controle de ocupação e alertas de lotação.
+- Visualização de mapa sugestivo de vagas disponíveis.
+- Registro de check-in.
+- Registro de checkout com cálculo automático do valor.
+- Gerenciamento de pagamentos (Pix, cartão, dinheiro).
+- Histórico de movimentações.
+- Controle de finalização de atendimentos.
+- Persistência local com SQLite.
+- Algoritmos inteligentes de sugestão de vagas.
+- Relatórios avançados e exportação (PDF/CSV).
+- Alertas sonoros ou automações baseadas em sensores.
 
 ---
 
 ## 4. Stakeholders
-- **Atendente:** Realiza check-in, check-out, orienta clientes e registra pagamentos.  
-- **Cliente:** Usuário do estacionamento que interage indiretamente com o sistema.  
-- **Gestor/Administrador:** Acompanha métricas, gera relatórios e realiza auditorias.  
-- **Sistema EasyStop:** Plataforma que executa os processos automatizados.  
+- **Atendente:** Realiza check-in, check-out, orienta clientes e registra pagamentos.
+- **Administrador/Gerente** Audita registros, consulta histórico e controla o sistema.  
+- **Cliente:** Usuário do estacionamento que interage indiretamente com o sistema.   
+- **Sistema EasyStop:** Plataforma que executa os processos automatizados.
+- **Equipe de Desenvolvimento:** Implementa funcionalidades, mantém arquitetura e banco de dados.  
 
 ---
 
 ## 5. Visão Geral do Produto
-O **EasyStop** será uma aplicação web responsiva, compatível com navegadores modernos e dispositivos como tablets e desktops.  
+O **EasyStop** é uma aplicação desktop JavaFX responsiva, compatível com dispositivos como tablets e desktops.  
 
-Seu diferencial está na sugestão automática de vagas com base em algoritmos de priorização, além de alertas inteligentes e relatórios exportáveis em formatos **CSV** e **PDF**.  
+Seu diferencial está na sugestão automática de vagas com base em algoritmos de priorização, além de alertas inteligentes e relatórios exportáveis em formatos **CSV** e **PDF**.
+
+Estrutura MVC idealizada:
+
+Model: entidades ORMLite + repositórios.
+
+View: FXML (Scene Builder) + CSS.
+
+Controller: lógica da interface, CRUD e fluxo operacional.
+
+Seu diferencial está na organização arquitetural, no reuso de componentes como o AbstractCrudController, no uso de view-models com JavaFX Properties e na persistência automatizada via ORMLite.
 
 ---
 
 ## 6. Funcionalidades Principais
 
-### Épico: Registro de Entrada e Saída de Veículos
+### Épico: Gestão de Entrada e Saída de Veículos
 - **HU-01:** Registrar check-in com placa, horário e vaga  
-- **HU-02:** Check-out com cálculo automático de fatura  
-- **HU-03:** Registro de pagamento e encerramento de atendimento  
+- **HU-02:** Listar check-ins ativos e finalizados.
+- **HU-03:** Check-out com cálculo automático de fatura
+- **HU-04:** Registro de pagamento e encerramento de atendimento  
 
 ### Épico: Visualização e Orientação de Vagas
-- **HU-04:** Mapa interativo com status das vagas  
-- **HU-05:** Sugestão automática de vaga livre  
+- **HU-05:** Criar novas vagas
+- **HU-06:** Gerenciar vagas existentes
+- **HU-07:** Mapa interativo com status das vagas  
+- **HU-08:** Sugestão automática de vaga livre
+- **HU-09:** Atualizar status (ocupada/livre).  
+- **HU-10:** Bloqueio da vaga durante um check-in.
 
 ### Épico: Controle de Vagas e Alertas de Lotação
-- **HU-06:** Monitoramento em tempo real da ocupação  
-- **HU-07:** Alerta visual e sonoro ao atingir 85% de lotação  
+- **HU-11:** Monitoramento em tempo real da ocupação  
+- **HU-12:** Alerta visual e sonoro ao atingir 85% de lotação  
+
+### Épico: Pagamentos
+- **HU-13:** Registrar pagamento associado ao checkout.
+- **HU-14:** Suporte a pagamento em PIX, cartão ou dinheiro.
+- **HU-15:** Atualizar status (pendente/concluído).
 
 ### Épico: Relatórios e Métricas
-- **HU-08:** Relatório diário de faturamento  
-- **HU-09:** Tempo médio de permanência  
-- **HU-10:** Horários de pico de ocupação  
-- **HU-11:** Histórico e frequência de clientes  
+- **HU-16:** Relatório diário de faturamento  
+- **HU-17:** Tempo médio de permanência  
+- **HU-18:** Horários de pico de ocupação  
+- **HU-19:** Histórico e frequência de clientes  
 
 ---
 
 ## 7. Requisitos Funcionais e Não Funcionais
 
 ### Requisitos Funcionais
-- **RF-1 a RF-5** conforme detalhados no documento original de ensaio.  
+Épico: Gestão de Entrada e Saída de Veículos
+- **RF-01:** O sistema deve permitir o registro de check-in de veículos com placa, horário e vaga.
+- **RF-02:** O sistema deve validar o formato da placa antes de confirmar o check-in.
+- **RF-03:** O sistema deve registrar automaticamente o horário de entrada do veículo.
+- **RF-04:** O sistema deve listar todos os check-ins ativos em tempo real.
+- **RF-05:** O sistema deve permitir a consulta de check-ins finalizados por período (diário, semanal, mensal).
+- **RF-06:** O sistema deve calcular automaticamente o valor da fatura no momento do check-out com base no tempo de permanência.
+- **RF-07:** O sistema deve liberar a vaga ocupada após o check-out.
+- **RF-08:** O sistema deve registrar o pagamento e encerrar o atendimento associado ao check-out.
+- **RF-09:** O sistema deve permitir cancelamento de check-in em caso de erro de registro.
+
+Épico: Visualização e Orientação de Vagas
+- **RF-10:** O sistema deve permitir a criação de novas vagas.
+- **RF-11:** O sistema deve permitir a edição e exclusão de vagas existentes.
+- **RF-12:** O sistema deve exibir um mapa interativo com status atualizado das vagas (livre/ocupada/em manutenção).
+- **RF-13:** O sistema deve sugerir automaticamente uma vaga livre no momento do check-in.
+- **RF-14:** O sistema deve atualizar o status da vaga para “ocupada” quando vinculada a um check-in.
+- **RF-15:** O sistema deve atualizar o status da vaga para “livre” após o check-out.
+- **RF-16:** O sistema deve permitir o bloqueio temporário de uma vaga durante um check-in ou manutenção.
+
+
+Épico: Controle de Vagas e Alertas de Lotação
+- **RF-17:** O sistema deve apresentar índice de ocupação do estacionamento.
+- **RF-18:** O sistema deve monitorar em tempo real a quantidade de vagas ocupadas e livres.
+- **RF-19:** O sistema deve calcular automaticamente a porcentagem de ocupação do estacionamento.
+- **RF-20:** O sistema deve emitir alerta visual e sonoro quando a ocupação atingir Valor limite antes da ocupação.
+- **RF-21:** O sistema deve registrar o histórico de alertas de lotação para auditoria.
+- **RF-22:** O sistema deve permitir configuração do limite de alerta (ex.: 80%, 90%).
+
+Épico: Pagamentos
+- **RF-23:** O sistema deve registrar pagamentos associados ao check-out.
+- **RF-24:** O sistema deve suportar pagamentos em PIX, cartão e dinheiro.
+- **RF-25:** O sistema deve atualizar o status do pagamento para “pendente” ou “concluído”.
+- **RF-26:** O sistema deve permitir reprocessamento de pagamentos em caso de falha.
+- **RF-27:** O sistema deve gerar comprovante de pagamento em formato digital (PDF/CSV).
+- **RF-28:** O sistema deve permitir vincular múltiplas formas de pagamento em um mesmo atendimento (ex.: parte em dinheiro, parte em cartão).
+
+Épico: Relatórios e Métricas
+- **RF-29:** O sistema deve gerar relatório diário de faturamento.
+- **RF-30:** O sistema deve calcular e exibir o tempo médio de permanência dos veículos.
+- **RF-31:** O sistema deve identificar e registrar horários de pico de ocupação.
+- **RF-32:** O sistema deve gerar relatório de histórico e frequência de clientes.
+- **RF-33:** O sistema deve permitir exportação de relatórios em CSV e PDF.
+- **RF-34:** O sistema deve permitir filtros nos relatórios (por período, por forma de pagamento, por setor).
+- **RF-35:** O sistema deve permitir visualização gráfica (dashboard) das métricas principais.
+- **RF-36:** O sistema deve permitir que administradores agendem relatórios automáticos (ex.: envio diário por e-mail).
 
 ### Requisitos Não Funcionais
-- **RNF-1:** Desempenho com resposta em até 2 segundos.  
-- **RNF-2:** Disponibilidade mínima de 99,5%.  
-- **RNF-3:** Usabilidade com interface limpa e responsiva.  
-- **RNF-4:** Segurança com criptografia e auditoria.  
-- **RNF-5:** Escalabilidade para até 1.000 vagas.  
-- **RNF-6:** Confiabilidade com backup diário.  
-- **RNF-7:** Compatibilidade com navegadores e dispositivos.  
+- **RNF-01:** O sistema deve responder às operações críticas (check-in, check-out, pagamento) em até 2 segundos.
+- **RNF-02:** O sistema deve suportar até 1.000 vagas simultâneas sem degradação perceptível de desempenho.
+- **RNF-03:** O sistema deve processar relatórios em até 5 segundos para períodos de até 30 dias.
+- **RNF-04:** O sistema deve suportar até 50 atendentes simultâneos realizando operações sem perda de performance.
+
+2. Disponibilidade e Confiabilidade
+- **RNF-05:** O sistema deve garantir 99,5% de disponibilidade mensal.
+- **RNF-06:** O sistema deve realizar backup diário automático dos dados operacionais e financeiros.
+- **RNF-07:** O sistema deve possuir mecanismos de recuperação automática em caso de falha parcial (ex.: indisponibilidade de banco de dados).
+- **RNF-08:** O sistema deve registrar logs de falhas e permitir auditoria posterior.
+
+3. Usabilidade
+- **RNF-09:** A interface deve ser intuitiva e responsiva, adaptando-se a tablets e desktops.
+- **RNF-10:** O processo de check-in e check-out deve ser concluído em até 30 segundos pelo atendente.
+- **RNF-11:** Mensagens de erro devem ser claras e compreensíveis, sem termos técnicos complexos.
+- **RNF-12:** O sistema deve oferecer feedback visual imediato ao usuário em todas as ações (ex.: confirmação de check-in).
+
+4. Segurança
+- **RNF-13:** Todos os dados sensíveis (placas, pagamentos, relatórios) devem ser transmitidos via HTTPS com TLS 1.2 ou superior.
+- **RNF-14:** Dados armazenados devem ser criptografados em repouso.
+- **RNF-15:** O sistema deve manter trilhas de auditoria para todas as operações críticas (check-in, check-out, pagamento).
+- **RNF-16:** O sistema deve implementar controle de acesso baseado em perfis (atendente, administrador).
+- **RNF-17:** O sistema não deve expor informações sensíveis em mensagens de erro ou logs.
+
+5. Escalabilidade
+- **RNF-18:** O sistema deve permitir expansão para até 5.000 vagas sem necessidade de reescrita da arquitetura.
+- **RNF-19:** O sistema deve suportar integração futura com aplicativos móveis sem comprometer a performance.
+- **RNF-20:** O sistema deve permitir adição de novos métodos de pagamento sem impacto nas funcionalidades existentes.
+
+6. Compatibilidade
+- **RNF-21:** O sistema deve ser compatível com os sistemas operacionais Windows e MacOS.
+- **RNF-22:** O sistema deve ser compatível com dispositivos de tela sensível ao toque (tablets).
+- **RNF-23:** O sistema deve permitir exportação de relatórios apenas nos formatos CSV e PDF.
+
+7. Manutenibilidade
+- **RNF-24:** O sistema deve ser modular, permitindo alterações em um módulo sem impacto nos demais.
+- **RNF-25:** O sistema deve possuir documentação atualizada em Swagger/OpenAPI para todas as APIs.
+- **RNF-26:** O sistema deve permitir testes automatizados em todas as funcionalidades críticas.
+
+8. Monitoramento e Alertas
+- **RNF-27:** O sistema deve monitorar métricas de desempenho e gerar alertas em caso de falhas.
+- **RNF-28:** O sistema deve emitir alertas visuais e sonoros quando a ocupação atingir 85%.
+- **RNF-29:** O sistema deve registrar métricas de erros e disponibilizá-las em relatórios gerenciais.
 
 ---
 
 ## 8. Restrições
-- O sistema deve operar em ambiente web.  
+- O aplicativo deve rodar localmente (desktop), não via navegador.
+- O sistema deve utilizar apenas JavaFX e SQLite (conforme arquitetura definida).
+- O banco deve permanecer leve para uso em máquinas simples. 
 - Deve suportar múltiplos atendentes simultâneos.  
 - Exportações devem ser limitadas aos formatos **CSV** e **PDF**.  
 
