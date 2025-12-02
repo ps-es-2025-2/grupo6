@@ -21,7 +21,6 @@ public class PagamentoDinheiro extends Pagamento {
     @Override
     public boolean processarPagamento() {
 
-        // Pagamento em dinheiro sempre aprova se o valor recebido >= valor da compra
         if (valorRecebido < this.valor) {
             this.status = StatusPagamento.RECUSADO;
             return false;
@@ -31,9 +30,6 @@ public class PagamentoDinheiro extends Pagamento {
         return true;
     }
 
-    // -----------------------------------------------------
-    // Getters
-    // -----------------------------------------------------
     public double getValorRecebido() {
         return valorRecebido;
     }
@@ -42,7 +38,6 @@ public class PagamentoDinheiro extends Pagamento {
         return troco;
     }
 
-    // Apenas se for necessário alterar valores futuramente
     public void setValorRecebido(double valorRecebido) {
         this.valorRecebido = valorRecebido;
     }

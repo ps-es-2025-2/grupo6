@@ -16,7 +16,7 @@ public class Pagamento {
         this.valor = valor;
         this.status = status;
         this.dataPagamento = dataPagamento;
-        this.checkoutId = String.valueOf(checkoutId); // <-- SETADO AQUI
+        this.checkoutId = String.valueOf(checkoutId);
     }
 
     public String getId() { return id; }
@@ -25,5 +25,5 @@ public class Pagamento {
     public String getStatus() { return status; }
     public String getDataPagamento() { return dataPagamento; }
 
-    public String getCheckoutId() { return checkoutId; } // <-- NOVO GETTER
+    public String getCheckoutId() { return checkoutId; }
 }

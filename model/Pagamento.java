@@ -47,7 +47,6 @@ public class Pagamento {
         return "tok_" + java.util.UUID.randomUUID().toString().replace("-", "");
     }
     public boolean processarPagamento() {return false;};
-    // Getters
     public String getTokenUnico() { return tokenUnico; }
     public int getId() { return id; }
     public Checkout getCheckout() { return checkout; }

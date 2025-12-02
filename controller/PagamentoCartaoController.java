@@ -5,12 +5,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
-import model.service.ServicoPagamento;
-import model.PagamentoCartao;
-import model.Repositorios;
 import model.Checkout;
+import model.PagamentoCartao;
 import model.enums.StatusPagamento;
+import model.service.ServicoPagamento;
 
 public class PagamentoCartaoController {
 
@@ -24,7 +22,6 @@ public class PagamentoCartaoController {
     private Checkout checkout;
     private double valor;
 
-    // callback para o CheckoutController
     private java.util.function.Consumer<PagamentoCartao> callbackPagamento;
 
     public void setCallbackPagamento(java.util.function.Consumer<PagamentoCartao> callback) {
@@ -44,10 +41,9 @@ public class PagamentoCartaoController {
             return;
         }
 
-        // cria pagamento sem checkout ainda
         pagamentoCartao = new PagamentoCartao(
-                null, // checkout será definido depois!
-                0,    // valor será atribuído pelo CheckoutController
+                null,
+                0,
                 numero,
                 nome,
                 validade,
@@ -66,7 +62,6 @@ public class PagamentoCartaoController {
 
         new Alert(Alert.AlertType.INFORMATION, "Pagamento aprovado!").show();
 
-        // callback retorna o objeto do pagamento
         if (callbackPagamento != null) {
             callbackPagamento.accept(pagamentoCartao);
         }

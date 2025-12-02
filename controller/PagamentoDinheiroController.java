@@ -4,11 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
-import model.PagamentoDinheiro;
-import model.service.ServicoPagamento;
 import model.Checkout;
+import model.PagamentoDinheiro;
 import model.enums.StatusPagamento;
+import model.service.ServicoPagamento;
 
 public class PagamentoDinheiroController {
 
@@ -19,28 +18,20 @@ public class PagamentoDinheiroController {
     private final ServicoPagamento servicoPagamento = new ServicoPagamento();
 
     private Checkout checkout;
-    private double valor;        // valor da compra
+    private double valor;
     private double valorRecebido; 
     private double troco;
 
-    // callback para o CheckoutController
     private java.util.function.Consumer<PagamentoDinheiro> callbackPagamento;
 
     public void setCallbackPagamento(java.util.function.Consumer<PagamentoDinheiro> callback) {
         this.callbackPagamento = callback;
     }
-
-    // -------------------------------------------------------------------
-    // Recebendo dados do Checkout (valor total da compra)
-    // -------------------------------------------------------------------
     public void receberDados(double valor) {
         this.valor = valor;
         valorPagamentoField.setText(String.format("%.2f", valor));
     }
 
-    // -------------------------------------------------------------------
-    // Calcula troco em tempo real
-    // -------------------------------------------------------------------
     @FXML
     private void calcularTroco() {
         try {
@@ -65,9 +56,6 @@ public class PagamentoDinheiroController {
         }
     }
 
-    // -------------------------------------------------------------------
-    // Confirmar o pagamento
-    // -------------------------------------------------------------------
     @FXML
     private void confirmarPagamento() {
 
@@ -88,7 +76,6 @@ public class PagamentoDinheiroController {
             return;
         }
 
-        // Criar objeto de pagamento
         PagamentoDinheiro pagamento = new PagamentoDinheiro(
                 checkout,
                 valor,
@@ -96,7 +83,6 @@ public class PagamentoDinheiroController {
                 troco
         );
 
-        // Processamento pelo serviço
         boolean aprovado = servicoPagamento.realizarPagamento(pagamento);
         pagamento.setStatus(
                 aprovado ? StatusPagamento.APROVADO : StatusPagamento.RECUSADO
@@ -109,7 +95,6 @@ public class PagamentoDinheiroController {
 
         new Alert(Alert.AlertType.INFORMATION, "Pagamento realizado com sucesso!").show();
 
-        // retorna o pagamento ao CheckoutController
         if (callbackPagamento != null) {
             callbackPagamento.accept(pagamento);
         }
@@ -120,13 +105,9 @@ public class PagamentoDinheiroController {
 
     public void setValorPagamento(double valor) {
         valorPagamentoField.setText(String.format("%.2f", valor));
-        this.valor = valor; // se quiser guardar para cálculo do troco
+        this.valor = valor;
     }
     
-
-    // -------------------------------------------------------------------
-    // Cancelar
-    // -------------------------------------------------------------------
     @FXML
     private void cancelar() {
         Stage stage = (Stage) valorPagamentoField.getScene().getWindow();

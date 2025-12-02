@@ -5,13 +5,6 @@ import java.util.Objects;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 
-/**
- * Encapsula o acesso ao banco de dados permitindo alternar entre SQLite e MariaDB
- * apenas alterando a URL de conexão. Para SQLite utilize o formato:
- * jdbc:sqlite:caminho/do/arquivo.db
- * Para MariaDB utilize:
- * jdbc:mariadb://host:porta/banco
- */
 public class Database {
 
     private final String jdbcUrl;

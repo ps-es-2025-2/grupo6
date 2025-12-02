@@ -9,11 +9,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ResourceBundle;
 
-import javafx.event.ActionEvent;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,11 +23,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.StringConverter;
-import javafx.scene.Scene;
-import javafx.scene.Parent;
 import javafx.stage.Stage;
-
+import javafx.util.StringConverter;
 import model.Checkin;
 import model.CheckinRepositorio;
 import model.Checkout;
@@ -59,7 +58,6 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
     @FXML private Button confirmarButton;
     @FXML private Button cancelarButton;
 
-    // novo campo: pagamento aprovado?
     private boolean pagamentoAprovado = false;
     private Pagamento pagamentoAprovadoObj;
 
@@ -71,7 +69,7 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        confirmarButton.setDisable(true); // só libera após pagamento
+        confirmarButton.setDisable(true);
 
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         checkinInfoCol.setCellValueFactory(new PropertyValueFactory<>("checkinInfo"));
@@ -127,9 +125,15 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
 
     @Override
     protected Checkout viewToModel() {
+        String dataHora = saidaHoraField.getText() != null ? saidaHoraField.getText().trim() : "";        
+        String valorHora = valorHoraField.getText() != null ? valorHoraField.getText().trim() : "";
+        Checkout.validarCampos(dataHora, valorHora);
+
         Checkout checkout = new Checkout();
         checkout.setCheckin(checkinCombo.getValue());
         checkout.setHorarioSaida(resolveDataHora());
+
+        
         checkout.setValorCalculado(calcularValor(checkout.getCheckin(), checkout.getHorarioSaida()));
         return checkout;
     }
@@ -149,8 +153,16 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
         long minutos = Math.max(Duration.between(entrada, saida).toMinutes(), 60);
         double horas = minutos / 60.0;
         double valorHora;
-        try { valorHora = Double.parseDouble(valorHoraField.getText().trim()); }
-        catch (NumberFormatException e) { valorHora = 0d; }
+        try {
+            String valorHoraTexto = valorHoraField.getText().trim().replace(",", ".");
+            Checkout.validarValorHora(valorHoraTexto);
+            valorHora = Double.parseDouble(valorHoraTexto);
+            if (valorHora <= 0) {
+                valorHora = 0d;
+            }
+        } catch (NumberFormatException e) {
+            valorHora = 0d;
+        }
         double valor = horas * valorHora;
         valorCalculadoLabel.setText(String.format("R$ %.2f", valor));
         return valor;
@@ -211,10 +223,8 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
             throw new IllegalArgumentException("O pagamento ainda não foi aprovado.");
         }
     
-        // checkout será salvo depois, então nada aqui
     }
     
-
     @Override
     protected void beforeUpdate(Checkout entidade) throws Exception {
         validarObrigatorios(entidade);
@@ -229,25 +239,21 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
         }
     }
 
-   @Override
-protected void afterCreate(Checkout checkoutSalvo) {
+    @Override
+    protected void afterCreate(Checkout checkoutSalvo) {
 
     try {
-        // vincula o checkout ao pagamento aprovado
         pagamentoAprovadoObj.setCheckout(checkoutSalvo);
         pagamentoAprovadoObj.setValor(checkoutSalvo.getValorCalculado());
 
-        // salva pagamento
         Repositorios.PAGAMENTOS.create(pagamentoAprovadoObj);
 
     } catch (Exception e) {
         new Alert(Alert.AlertType.ERROR, "Erro ao salvar pagamento: " + e.getMessage()).show();
     }
 
-    // finalizar vaga/checkin
     finalizarCheckin(checkoutSalvo);
 }
-
 
     @Override
     protected void afterDelete(Checkout entidade) {
@@ -306,7 +312,6 @@ protected void afterCreate(Checkout checkoutSalvo) {
     
             PagamentoCartaoController controller = loader.getController();
     
-            // callback agora recebe objeto pagamento, não boolean
             controller.setCallbackPagamento(pagamento -> {
                 this.pagamentoAprovado = true;
                 this.pagamentoAprovadoObj = pagamento;
@@ -324,52 +329,45 @@ protected void afterCreate(Checkout checkoutSalvo) {
         }
     }
 
-   private void abrirTelaPagamentoDinheiro() {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/pagamentoDinheiro.fxml"));
-        Parent root = loader.load();
+    private void abrirTelaPagamentoDinheiro() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/pagamentoDinheiro.fxml"));
+            Parent root = loader.load();
 
-        PagamentoDinheiroController controller = loader.getController();
+            PagamentoDinheiroController controller = loader.getController();
 
-        // 🔥 Calcula o valor da compra
-        double valorCompra = calcularValor(checkinCombo.getValue(), resolveDataHora());
+            double valorCompra = calcularValor(checkinCombo.getValue(), resolveDataHora());
 
-        // 🔥 Envia SOMENTE o valor
-        controller.setValorPagamento(valorCompra);
+            controller.setValorPagamento(valorCompra);
 
-        // Callback (continua igual)
-        controller.setCallbackPagamento(pagamento -> {
-            this.pagamentoAprovado = true;
-            this.pagamentoAprovadoObj = pagamento;
-            confirmarButton.setDisable(false);
-        });
+            controller.setCallbackPagamento(pagamento -> {
+                this.pagamentoAprovado = true;
+                this.pagamentoAprovadoObj = pagamento;
+                confirmarButton.setDisable(false);
+            });
 
-        Stage stage = new Stage();
-        stage.setTitle("Pagamento - Dinheiro");
-        stage.setScene(new Scene(root));
-        stage.setResizable(false);
-        stage.show();
+            Stage stage = new Stage();
+            stage.setTitle("Pagamento - Dinheiro");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.show();
 
-    } catch (Exception e) {
-        new Alert(Alert.AlertType.ERROR, "Erro ao abrir tela de pagamento: " + e.getMessage()).show();
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, "Erro ao abrir tela de pagamento: " + e.getMessage()).show();
+        }
     }
-}
 
-    
-private void abrirTelaPagamentoPix() {
+    private void abrirTelaPagamentoPix() {
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/pagamentoPix.fxml"));
         Parent root = loader.load();
 
         PagamentoPixController controller = loader.getController();
 
-        // 🔥 1 — calcula o valor da compra
         double valorCompra = calcularValor(checkinCombo.getValue(), resolveDataHora());
 
-        // 🔥 2 — envia o valor para o controller
         controller.receberDados(valorCompra);
 
-        // 🔥 3 — callback igual aos outros pagamentos
         controller.setCallbackPagamento(pagamento -> {
             this.pagamentoAprovado = true;
             this.pagamentoAprovadoObj = pagamento;
@@ -387,9 +385,6 @@ private void abrirTelaPagamentoPix() {
     }
 }
 
-    
-    
-
     @FXML
     private void onFormaPagamentoChanged(ActionEvent event) {
         String selected = formaPagamentoCombo.getValue();
@@ -405,8 +400,6 @@ private void abrirTelaPagamentoPix() {
         }
     }
     
-
-    // 🔥 chamado pela tela de pagamento
    public void onPagamentoConcluido(boolean aprovado) {
     this.pagamentoAprovado = aprovado;
     confirmarButton.setDisable(!aprovado);

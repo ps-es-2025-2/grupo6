@@ -111,6 +111,9 @@ public class CheckinController extends AbstractCrudController<Checkin, view.Chec
 
     @Override
     protected Checkin viewToModel() {
+        String dtHr = entradaHoraField.getText() != null ? entradaHoraField.getText().trim() : "";
+        Checkin.validarHorarioEntrada(dtHr);
+
         Checkin checkin = new Checkin();
         checkin.setVeiculo(veiculoCombo.getValue());
         checkin.setVaga(vagaCombo.getValue());
@@ -182,9 +185,7 @@ public class CheckinController extends AbstractCrudController<Checkin, view.Chec
     }
 
     @Override
-    protected void setIdOnEntity(Checkin entidade, Integer id) {
-        // o ID é auto gerado
-    }
+    protected void setIdOnEntity(Checkin entidade, Integer id) { }
 
     @Override
     protected void beforeCreate(Checkin entidade) throws Exception {
@@ -202,6 +203,9 @@ public class CheckinController extends AbstractCrudController<Checkin, view.Chec
         }
         if (entidade.getVaga() == null) {
             throw new IllegalArgumentException("Selecione uma vaga disponível.");
+        }
+        if (entidade.getHorarioEntrada() == null) {
+            throw new IllegalArgumentException("Selecione uma data e hora para o check-in.");
         }
     }
 
@@ -271,7 +275,6 @@ public class CheckinController extends AbstractCrudController<Checkin, view.Chec
                     return;
                 }
             } catch (Exception e) {
-                // ignora e deixa o fluxo continuar
             }
         }
         super.onDeletar();
