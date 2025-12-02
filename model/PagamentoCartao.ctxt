@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=PagamentoCartao
+comment1.params=
+comment1.target=PagamentoCartao()
+comment2.params=checkout\ valor\ numeroCartao\ nomeTitular\ validade\ cvv
+comment2.target=PagamentoCartao(Checkout,\ double,\ java.lang.String,\ java.lang.String,\ java.lang.String,\ java.lang.String)
+comment3.params=numero
+comment3.target=java.lang.String\ detectarBandeira(java.lang.String)
+comment4.params=
+comment4.target=boolean\ processarPagamento()
+comment5.params=
+comment5.target=java.lang.String\ getUltimos4()
+comment6.params=
+comment6.target=java.lang.String\ getBandeira()
+comment7.params=valorCalculado
+comment7.target=void\ setValor(double)
+numComments=8

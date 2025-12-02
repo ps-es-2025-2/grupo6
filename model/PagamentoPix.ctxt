@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=PagamentoPix
+comment1.params=
+comment1.target=PagamentoPix()
+comment2.params=checkout\ valor\ codigoPix
+comment2.target=PagamentoPix(Checkout,\ double,\ java.lang.String)
+comment3.params=
+comment3.target=boolean\ processarPagamento()
+comment4.params=
+comment4.target=java.lang.String\ getCodigoPix()
+comment5.params=codigoPix
+comment5.target=void\ setCodigoPix(java.lang.String)
+numComments=6

@@ -4,9 +4,6 @@ import model.Pagamento;
 
 public class ServicoPagamento {
 
-    /**
-     * Recebe um Pagamento genérico e chama o método polimórfico processarPagamento()
-     */
     public boolean realizarPagamento(Pagamento pagamento) {
 
         if (pagamento == null)

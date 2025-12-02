@@ -6,10 +6,14 @@ import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Pagamento;
-import model.Repositorio;
 import model.enums.StatusPagamento;
 
 public class PagamentoController implements Initializable {
@@ -52,16 +56,11 @@ public class PagamentoController implements Initializable {
             if (novo != null) preencherCampos(novo);
         });
 
-        // carregamento inicial
         atualizarTabela();
 
-        // início do auto refresh
         iniciarAutoRefresh();
     }
 
-    // --------------------------------------------
-    // NOVO MÉTODO – atualiza a tabela inteira
-    // --------------------------------------------
     private void atualizarTabela() {
         try {
             tabela.getItems().setAll(
@@ -72,9 +71,6 @@ public class PagamentoController implements Initializable {
         }
     }
 
-    // --------------------------------------------
-    // NOVO MÉTODO – auto refresh a cada 3 segundos
-    // --------------------------------------------
     private void iniciarAutoRefresh() {
         javafx.animation.Timeline timeline = new javafx.animation.Timeline(
                 new javafx.animation.KeyFrame(

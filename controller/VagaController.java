@@ -1,5 +1,8 @@
 package controller;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -11,9 +14,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import model.Repositorio;
 import model.Vaga;
 import model.VagaRepositorio;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class VagaController extends AbstractCrudController<Vaga, view.Vaga, Integer> implements Initializable {
 
@@ -66,13 +66,9 @@ public class VagaController extends AbstractCrudController<Vaga, view.Vaga, Inte
         super.initialize();
         atualizarTabela();
 
-        // início do auto refresh
         iniciarAutoRefresh();
     }
 
-    // --------------------------------------------
-    // NOVO MÉTODO – atualiza a tabela inteira
-    // --------------------------------------------
     private void atualizarTabela() {
         try {
             tabela.getItems().setAll(
@@ -83,9 +79,6 @@ public class VagaController extends AbstractCrudController<Vaga, view.Vaga, Inte
         }
     }
 
-    // --------------------------------------------
-    // NOVO MÉTODO – auto refresh a cada 3 segundos
-    // --------------------------------------------
     private void iniciarAutoRefresh() {
         javafx.animation.Timeline timeline = new javafx.animation.Timeline(
                 new javafx.animation.KeyFrame(
@@ -108,9 +101,13 @@ public class VagaController extends AbstractCrudController<Vaga, view.Vaga, Inte
 
     @Override
     protected Vaga viewToModel() {
+        String codigo = codigoField.getText() != null ? codigoField.getText().trim() : "";
+        String setor = setorField.getText() != null ? setorField.getText().trim() : "";
+
+        Vaga.validarDados(codigo, setor);
         Vaga vaga = new Vaga();
-        vaga.setCodigo(codigoField.getText().trim());
-        vaga.setSetor(setorField.getText().trim());
+        vaga.setCodigo(codigo.toUpperCase());
+        vaga.setSetor(setor);
         vaga.setOcupada(ocupadaCheck.isSelected());
         return vaga;
     }
@@ -147,7 +144,6 @@ public class VagaController extends AbstractCrudController<Vaga, view.Vaga, Inte
 
     @Override
     protected void setIdOnEntity(Vaga entidade, Integer id) {
-        // ORMLite cuida do ID auto gerado, nenhum setter necessário
     }
 }
 

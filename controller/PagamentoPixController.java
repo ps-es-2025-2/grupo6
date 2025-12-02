@@ -1,18 +1,17 @@
 package controller;
 
+import java.util.UUID;
+import java.util.function.Consumer;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
-import model.PagamentoPix;
-import model.service.ServicoPagamento;
 import model.Checkout;
+import model.PagamentoPix;
 import model.enums.StatusPagamento;
-
-import java.util.UUID;
-import java.util.function.Consumer;
+import model.service.ServicoPagamento;
 
 public class PagamentoPixController {
 
@@ -22,31 +21,21 @@ public class PagamentoPixController {
     private final ServicoPagamento servicoPagamento = new ServicoPagamento();
 
     private Checkout checkout;
-    private double valor;          // valor total da compra
-    private String codigoPix;      // código PIX gerado
+    private double valor;
+    private String codigoPix;
 
-    // callback para o CheckoutController
     private Consumer<PagamentoPix> callbackPagamento;
 
     public void setCallbackPagamento(Consumer<PagamentoPix> callback) {
         this.callbackPagamento = callback;
     }
-
-    // -------------------------------------------------------------------
-    // Recebe dados do checkout (valor total)
-    // -------------------------------------------------------------------
     public void receberDados(double valor) {
         this.valor = valor;
         valorPagamentoField.setText(String.format("%.2f", valor));
 
         gerarCodigoPix();
     }
-
-    // -------------------------------------------------------------------
-    // Geração do código PIX fictício
-    // -------------------------------------------------------------------
     private void gerarCodigoPix() {
-        // Código simples simulando padrão BR Code
         this.codigoPix = "00020126360014BR.GOV.BCB.PIX0123"
                 + UUID.randomUUID().toString().replace("-", "")
                 + "5204000053039865406" + valor;
@@ -54,9 +43,6 @@ public class PagamentoPixController {
         pixCodeTextArea.setText(this.codigoPix);
     }
 
-    // -------------------------------------------------------------------
-    // Confirmar pagamento PIX
-    // -------------------------------------------------------------------
     @FXML
     private void confirmarPagamento() {
 
@@ -65,14 +51,12 @@ public class PagamentoPixController {
             return;
         }
 
-        // Criar objeto de pagamento
         PagamentoPix pagamento = new PagamentoPix(
                 checkout,
                 valor,
                 codigoPix
         );
 
-        // Processamento do pagamento
         boolean aprovado = servicoPagamento.realizarPagamento(pagamento);
         pagamento.setStatus(
                 aprovado ? StatusPagamento.APROVADO : StatusPagamento.RECUSADO
@@ -85,7 +69,6 @@ public class PagamentoPixController {
 
         new Alert(Alert.AlertType.INFORMATION, "Pagamento PIX aprovado!").show();
 
-        // Retorna ao CheckoutController
         if (callbackPagamento != null) {
             callbackPagamento.accept(pagamento);
         }
@@ -94,9 +77,6 @@ public class PagamentoPixController {
         stage.close();
     }
 
-    // -------------------------------------------------------------------
-    // Cancelar
-    // -------------------------------------------------------------------
     @FXML
     private void cancelar() {
         Stage stage = (Stage) valorPagamentoField.getScene().getWindow();

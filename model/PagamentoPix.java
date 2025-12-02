@@ -19,9 +19,6 @@ public class PagamentoPix extends Pagamento {
     @Override
     public boolean processarPagamento() {
 
-        // Aqui você pode implementar validações reais.
-        // Por enquanto, PIX sempre será aprovado se o código não estiver vazio.
-
         if (codigoPix == null || codigoPix.isBlank()) {
             this.status = StatusPagamento.RECUSADO;
             return false;
@@ -31,9 +28,6 @@ public class PagamentoPix extends Pagamento {
         return true;
     }
 
-    // -----------------------------------------------------
-    // Getters e Setters
-    // -----------------------------------------------------
     public String getCodigoPix() {
         return codigoPix;
     }

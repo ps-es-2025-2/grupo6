@@ -1,9 +1,5 @@
 package model;
 
-import java.time.LocalDateTime;
-
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import model.enums.StatusPagamento;
@@ -15,7 +11,6 @@ public class PagamentoCartao extends Pagamento {
     private String ultimos4; 
     private String bandeira;
 
-    // Dados sensíveis NÃO são armazenados.
     private transient String numeroCartao;
     private transient String nomeTitular;
     private transient String validade;
@@ -49,9 +44,7 @@ public class PagamentoCartao extends Pagamento {
 
     @Override
     public boolean processarPagamento() {
-        // -------------------------------------------
-        // Validar usando regex (apenas em memória)
-        // -------------------------------------------
+
         boolean numeroValido = numeroCartao.matches("^\\d{16}$");
         boolean cvvValido = cvv.matches("^\\d{3}$");
         boolean validadeValida = validade.matches("^(0[1-9]|1[0-2])\\/\\d{2}$");
@@ -60,11 +53,9 @@ public class PagamentoCartao extends Pagamento {
             this.status = StatusPagamento.RECUSADO;
             return false;
         }
-    
-        // Tudo válido
+
         this.status = StatusPagamento.APROVADO;
-    
-        // Remover dados sensíveis da memória
+
         this.numeroCartao = null;
         this.cvv = null;
         this.nomeTitular = null;
