@@ -8,10 +8,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.table.TableUtils;
 
-/**
- * Repositório genérico responsável por intermediar todas as operações CRUD via ORMLite.
- * Contém métodos básicos e expõe o DAO para consultas específicas.
- */
 public class Repositorio<T, ID> {
 
     private final Class<T> entityClass;

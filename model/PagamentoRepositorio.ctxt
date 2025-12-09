@@ -4,4 +4,6 @@ comment1.params=database
 comment1.target=PagamentoRepositorio(Database)
 comment2.params=checkoutId
 comment2.target=Pagamento\ buscarPorCheckout(int)
-numComments=3
+comment3.params=pagamentoId\ novoStatus
+comment3.target=boolean\ updateStatus(int,\ enums.StatusPagamento)
+numComments=4

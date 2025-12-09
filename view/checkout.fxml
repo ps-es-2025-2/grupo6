@@ -40,6 +40,9 @@
                <TextField fx:id="valorHoraField" onKeyReleased="#onHorarioChanged" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                <Label text="Valor Calculado" GridPane.rowIndex="4"/>
                <Label fx:id="valorCalculadoLabel" text="R$ 0,00" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+               <Label text="Forma de Pagamento" GridPane.rowIndex="5"/>
+               <ComboBox fx:id="formaPagamentoCombo" onAction="#onFormaPagamentoChanged" 
+              GridPane.columnIndex="1" GridPane.rowIndex="5"/>
             </GridPane>
          </center>
          <bottom>

@@ -1,5 +1,8 @@
 package controller;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -10,9 +13,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import model.Repositorio;
 import model.Veiculo;
 import model.VeiculoRepositorio;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class VeiculoController extends AbstractCrudController<Veiculo, view.Veiculo, String> implements Initializable {
 
@@ -77,6 +77,12 @@ public class VeiculoController extends AbstractCrudController<Veiculo, view.Veic
 
     @Override
     protected Veiculo viewToModel() {
+        String placa = placaField.getText() != null ? placaField.getText().trim() : "";
+        String modelo = modeloField.getText() != null ? modeloField.getText().trim() : "";
+        String cor = corField.getText() != null ? corField.getText().trim() : "";
+        String proprietario = proprietarioField.getText() != null ? proprietarioField.getText().trim() : "";
+
+        Veiculo.validarDados(placa, modelo, cor, proprietario);
         Veiculo veiculo = new Veiculo();
         veiculo.setPlaca(placaField.getText().trim());
         veiculo.setModelo(modeloField.getText().trim());
@@ -124,4 +130,3 @@ public class VeiculoController extends AbstractCrudController<Veiculo, view.Veic
         entidade.setPlaca(id);
     }
 }
-

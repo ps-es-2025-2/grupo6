@@ -6,80 +6,56 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import model.enums.StatusPagamento;
+
 @DatabaseTable(tableName = "pagamentos")
 public class Pagamento {
 
     @DatabaseField(generatedId = true)
-    private int id;
+    protected int id;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, unique = true, columnName = "checkout_id")
-    private Checkout checkout;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, columnName = "checkout_id")
+    protected Checkout checkout;
 
-    @DatabaseField(canBeNull = false, columnName = "metodo")
-    private String metodo;
+    @DatabaseField(canBeNull = false)
+    protected String tipo; // Cartao, Pix, Dinheiro
 
-    @DatabaseField(canBeNull = false, columnName = "status")
-    private String status;
+    @DatabaseField(canBeNull = false)
+    protected double valor;
 
-    @DatabaseField(canBeNull = false, columnName = "valor_total")
-    private double valorTotal;
+    @DatabaseField(canBeNull = false, dataType = DataType.ENUM_STRING)
+    protected StatusPagamento status;
 
-    @DatabaseField(canBeNull = false, dataType = DataType.SERIALIZABLE, columnName = "data_pagamento")
-    private LocalDateTime dataPagamento;
+    @DatabaseField(canBeNull = false, dataType = DataType.SERIALIZABLE)
+    protected LocalDateTime dataPagamento;
+    
+    @DatabaseField(canBeNull = false, columnName = "token_unico")
+    private String tokenUnico;
 
-    public Pagamento() {
-    }
+    public Pagamento() {}
 
-    public Pagamento(Checkout checkout, String metodo, String status, double valorTotal, LocalDateTime dataPagamento) {
+    public Pagamento(Checkout checkout, String tipo, double valor) {
         this.checkout = checkout;
-        this.metodo = metodo;
-        this.status = status;
-        this.valorTotal = valorTotal;
-        this.dataPagamento = dataPagamento;
+        this.tipo = tipo;
+        this.valor = valor;
+        this.status = StatusPagamento.PENDENTE;
+        this.dataPagamento = LocalDateTime.now();
+        this.tokenUnico = gerarToken();
     }
 
-    public int getId() {
-        return id;
+    private String gerarToken() {
+        return "tok_" + java.util.UUID.randomUUID().toString().replace("-", "");
     }
-
-    public Checkout getCheckout() {
-        return checkout;
-    }
-
-    public void setCheckout(Checkout checkout) {
-        this.checkout = checkout;
-    }
-
-    public String getMetodo() {
-        return metodo;
-    }
-
-    public void setMetodo(String metodo) {
-        this.metodo = metodo;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public double getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(double valorTotal) {
-        this.valorTotal = valorTotal;
-    }
-
-    public LocalDateTime getDataPagamento() {
-        return dataPagamento;
-    }
-
-    public void setDataPagamento(LocalDateTime dataPagamento) {
-        this.dataPagamento = dataPagamento;
-    }
+    public boolean processarPagamento() {return false;};
+    public String getTokenUnico() { return tokenUnico; }
+    public int getId() { return id; }
+    public Checkout getCheckout() { return checkout; }
+    public void setCheckout(Checkout checkout) { this.checkout = checkout; }
+    public String getTipo() { return tipo; }
+    public StatusPagamento getStatus() { return status; }
+    public double getValor() { return valor; }
+    public void setValor(double valor){this.valor = valor;}
+    public LocalDateTime getDataPagamento() { return dataPagamento; }
+    public void setStatus(StatusPagamento status) { this.status = status; }
+    public void setDataPagamento(LocalDateTime dataPagamento) {this.dataPagamento = dataPagamento;}
 }
-

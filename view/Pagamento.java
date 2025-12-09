@@ -1,78 +1,29 @@
 package view;
 
-import java.time.LocalDateTime;
-
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.StringProperty;
-
 public class Pagamento {
 
-    private final IntegerProperty id = new SimpleIntegerProperty();
-    private final StringProperty checkoutInfo = new SimpleStringProperty();
-    private final StringProperty metodo = new SimpleStringProperty();
-    private final StringProperty status = new SimpleStringProperty();
-    private final StringProperty valorTotal = new SimpleStringProperty();
-    private final ObjectProperty<LocalDateTime> dataPagamento = new SimpleObjectProperty<>();
+    private final String id;
+    private final String tipo;
+    private final String valor;
+    private final String status;
+    private final String dataPagamento;
 
-    public Pagamento(int id, String checkoutInfo, String metodo, String status, double valorTotal, LocalDateTime dataPagamento) {
-        this.id.set(id);
-        this.checkoutInfo.set(checkoutInfo);
-        this.metodo.set(metodo);
-        this.status.set(status);
-        this.valorTotal.set(String.format("%.2f", valorTotal));
-        this.dataPagamento.set(dataPagamento);
+    private final String checkoutId; // <-- NOVO CAMPO
+
+    public Pagamento(int id, String tipo, String valor, String status, String dataPagamento, int checkoutId) {
+        this.id = String.valueOf(id);
+        this.tipo = tipo;
+        this.valor = valor;
+        this.status = status;
+        this.dataPagamento = dataPagamento;
+        this.checkoutId = String.valueOf(checkoutId);
     }
 
-    public int getId() {
-        return id.get();
-    }
+    public String getId() { return id; }
+    public String getTipo() { return tipo; }
+    public String getValor() { return valor; }
+    public String getStatus() { return status; }
+    public String getDataPagamento() { return dataPagamento; }
 
-    public IntegerProperty idProperty() {
-        return id;
-    }
-
-    public String getCheckoutInfo() {
-        return checkoutInfo.get();
-    }
-
-    public StringProperty checkoutInfoProperty() {
-        return checkoutInfo;
-    }
-
-    public String getMetodo() {
-        return metodo.get();
-    }
-
-    public StringProperty metodoProperty() {
-        return metodo;
-    }
-
-    public String getStatus() {
-        return status.get();
-    }
-
-    public StringProperty statusProperty() {
-        return status;
-    }
-
-    public String getValorTotal() {
-        return valorTotal.get();
-    }
-
-    public StringProperty valorTotalProperty() {
-        return valorTotal;
-    }
-
-    public LocalDateTime getDataPagamento() {
-        return dataPagamento.get();
-    }
-
-    public ObjectProperty<LocalDateTime> dataPagamentoProperty() {
-        return dataPagamento;
-    }
+    public String getCheckoutId() { return checkoutId; }
 }
-

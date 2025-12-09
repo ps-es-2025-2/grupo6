@@ -10,8 +10,12 @@ import java.time.format.DateTimeParseException;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,50 +23,44 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import model.Checkin;
 import model.CheckinRepositorio;
 import model.Checkout;
 import model.CheckoutRepositorio;
+import model.Pagamento;
 import model.Repositorio;
+import model.Repositorios;
 import model.VagaRepositorio;
 
 public class CheckoutController extends AbstractCrudController<Checkout, view.Checkout, Integer> implements Initializable {
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
-    @FXML
-    private TableView<view.Checkout> tabela;
-    @FXML
-    private TableColumn<view.Checkout, Number> idCol;
-    @FXML
-    private TableColumn<view.Checkout, String> checkinInfoCol;
-    @FXML
-    private TableColumn<view.Checkout, LocalDateTime> saidaCol;
-    @FXML
-    private TableColumn<view.Checkout, String> valorCol;
+    @FXML private TableView<view.Checkout> tabela;
+    @FXML private TableColumn<view.Checkout, Number> idCol;
+    @FXML private TableColumn<view.Checkout, String> checkinInfoCol;
+    @FXML private TableColumn<view.Checkout, LocalDateTime> saidaCol;
+    @FXML private TableColumn<view.Checkout, String> valorCol;
 
-    @FXML
-    private javafx.scene.control.ComboBox<Checkin> checkinCombo;
-    @FXML
-    private javafx.scene.control.DatePicker saidaDatePicker;
-    @FXML
-    private TextField saidaHoraField;
-    @FXML
-    private TextField valorHoraField;
-    @FXML
-    private Label valorCalculadoLabel;
+    @FXML private javafx.scene.control.ComboBox<Checkin> checkinCombo;
+    @FXML private javafx.scene.control.DatePicker saidaDatePicker;
+    @FXML private TextField saidaHoraField;
+    @FXML private TextField valorHoraField;
+    @FXML private Label valorCalculadoLabel;
 
-    @FXML
-    private Button adicionarButton;
-    @FXML
-    private Button atualizarButton;
-    @FXML
-    private Button deletarButton;
-    @FXML
-    private Button confirmarButton;
-    @FXML
-    private Button cancelarButton;
+    @FXML private javafx.scene.control.ComboBox<String> formaPagamentoCombo;
+
+    @FXML private Button adicionarButton;
+    @FXML private Button atualizarButton;
+    @FXML private Button deletarButton;
+    @FXML private Button confirmarButton;
+    @FXML private Button cancelarButton;
+
+    private boolean pagamentoAprovado = false;
+    private Pagamento pagamentoAprovadoObj;
+
 
     private final CheckoutRepositorio repositorio = model.Repositorios.CHECKOUTS;
     private final CheckinRepositorio checkinRepositorio = model.Repositorios.CHECKINS;
@@ -70,6 +68,9 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        confirmarButton.setDisable(true);
+
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         checkinInfoCol.setCellValueFactory(new PropertyValueFactory<>("checkinInfo"));
         saidaCol.setCellValueFactory(new PropertyValueFactory<>("horarioSaida"));
@@ -83,9 +84,7 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
             }
 
             @Override
-            public Checkin fromString(String string) {
-                return null;
-            }
+            public Checkin fromString(String string) { return null; }
         });
 
         recarregarCheckins();
@@ -100,6 +99,11 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
         super.deletarButton = deletarButton;
         super.confirmarButton = confirmarButton;
         super.cancelarButton = cancelarButton;
+
+        formaPagamentoCombo.setItems(FXCollections.observableArrayList(
+            "Dinheiro", "Cartão", "Pix"
+        ));
+        formaPagamentoCombo.getSelectionModel().select("Dinheiro");
 
         super.initialize();
     }
@@ -121,9 +125,15 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
 
     @Override
     protected Checkout viewToModel() {
+        String dataHora = saidaHoraField.getText() != null ? saidaHoraField.getText().trim() : "";        
+        String valorHora = valorHoraField.getText() != null ? valorHoraField.getText().trim() : "";
+        Checkout.validarCampos(dataHora, valorHora);
+
         Checkout checkout = new Checkout();
         checkout.setCheckin(checkinCombo.getValue());
         checkout.setHorarioSaida(resolveDataHora());
+
+        
         checkout.setValorCalculado(calcularValor(checkout.getCheckin(), checkout.getHorarioSaida()));
         return checkout;
     }
@@ -132,11 +142,8 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
         LocalDate data = saidaDatePicker.getValue();
         if (data == null) data = LocalDate.now();
         LocalTime hora;
-        try {
-            hora = LocalTime.parse(saidaHoraField.getText(), TIME_FORMATTER);
-        } catch (DateTimeParseException e) {
-            hora = LocalTime.now();
-        }
+        try { hora = LocalTime.parse(saidaHoraField.getText(), TIME_FORMATTER); }
+        catch (DateTimeParseException e) { hora = LocalTime.now(); }
         return LocalDateTime.of(data, hora);
     }
 
@@ -147,7 +154,12 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
         double horas = minutos / 60.0;
         double valorHora;
         try {
-            valorHora = Double.parseDouble(valorHoraField.getText().trim());
+            String valorHoraTexto = valorHoraField.getText().trim().replace(",", ".");
+            Checkout.validarValorHora(valorHoraTexto);
+            valorHora = Double.parseDouble(valorHoraTexto);
+            if (valorHora <= 0) {
+                valorHora = 0d;
+            }
         } catch (NumberFormatException e) {
             valorHora = 0d;
         }
@@ -180,6 +192,9 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
         saidaHoraField.setText(LocalTime.now().format(TIME_FORMATTER));
         valorHoraField.setText("10.00");
         valorCalculadoLabel.setText("R$ 0,00");
+
+        pagamentoAprovado = false;
+        confirmarButton.setDisable(true);
     }
 
     @Override
@@ -191,28 +206,31 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
     }
 
     @Override
-    protected TableView<view.Checkout> getTabela() {
-        return tabela;
-    }
+    protected TableView<view.Checkout> getTabela() { return tabela; }
 
     @Override
-    protected Integer getIdFromViewModel(view.Checkout viewModel) {
-        return viewModel.getId();
-    }
+    protected Integer getIdFromViewModel(view.Checkout viewModel) { return viewModel.getId(); }
 
     @Override
-    protected void setIdOnEntity(Checkout entidade, Integer id) {
-        // auto
-    }
+    protected void setIdOnEntity(Checkout entidade, Integer id) { }
 
     @Override
     protected void beforeCreate(Checkout entidade) throws Exception {
+    
         validarObrigatorios(entidade);
+    
+        if (!pagamentoAprovado) {
+            throw new IllegalArgumentException("O pagamento ainda não foi aprovado.");
+        }
+    
     }
-
+    
     @Override
     protected void beforeUpdate(Checkout entidade) throws Exception {
         validarObrigatorios(entidade);
+        if (!pagamentoAprovado) {
+            throw new IllegalArgumentException("O pagamento ainda não foi aprovado.");
+        }
     }
 
     private void validarObrigatorios(Checkout entidade) {
@@ -222,9 +240,20 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
     }
 
     @Override
-    protected void afterCreate(Checkout entidade) {
-        finalizarCheckin(entidade);
+    protected void afterCreate(Checkout checkoutSalvo) {
+
+    try {
+        pagamentoAprovadoObj.setCheckout(checkoutSalvo);
+        pagamentoAprovadoObj.setValor(checkoutSalvo.getValorCalculado());
+
+        Repositorios.PAGAMENTOS.create(pagamentoAprovadoObj);
+
+    } catch (Exception e) {
+        new Alert(Alert.AlertType.ERROR, "Erro ao salvar pagamento: " + e.getMessage()).show();
     }
+
+    finalizarCheckin(checkoutSalvo);
+}
 
     @Override
     protected void afterDelete(Checkout entidade) {
@@ -260,27 +289,123 @@ public class CheckoutController extends AbstractCrudController<Checkout, view.Ch
     }
 
     private void garantirCheckinDisponivel(Checkin checkin) {
-        if (checkin == null) {
-            return;
-        }
+        if (checkin == null) return;
         boolean presente = checkinCombo.getItems().stream().anyMatch(c -> c.getId() == checkin.getId());
-        if (!presente) {
-            checkinCombo.getItems().add(checkin);
-        }
+        if (!presente) checkinCombo.getItems().add(checkin);
     }
 
     private void atualizarValorCalculado() {
         Checkin selecionado = checkinCombo.getValue();
-        if (selecionado != null) {
-            calcularValor(selecionado, resolveDataHora());
-        } else {
-            valorCalculadoLabel.setText("R$ 0,00");
-        }
+        if (selecionado != null) calcularValor(selecionado, resolveDataHora());
+        else valorCalculadoLabel.setText("R$ 0,00");
     }
 
     @FXML
     private void onHorarioChanged() {
         atualizarValorCalculado();
     }
+
+    private void abrirTelaPagamentoCartao() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/pagamentoCartao.fxml"));
+            Parent root = loader.load();
+    
+            PagamentoCartaoController controller = loader.getController();
+    
+            controller.setCallbackPagamento(pagamento -> {
+                this.pagamentoAprovado = true;
+                this.pagamentoAprovadoObj = pagamento;
+                confirmarButton.setDisable(false);
+            });
+    
+            Stage stage = new Stage();
+            stage.setTitle("Pagamento - Cartão");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.show();
+    
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, "Erro ao abrir tela de pagamento: " + e.getMessage()).show();
+        }
+    }
+
+    private void abrirTelaPagamentoDinheiro() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/pagamentoDinheiro.fxml"));
+            Parent root = loader.load();
+
+            PagamentoDinheiroController controller = loader.getController();
+
+            double valorCompra = calcularValor(checkinCombo.getValue(), resolveDataHora());
+
+            controller.setValorPagamento(valorCompra);
+
+            controller.setCallbackPagamento(pagamento -> {
+                this.pagamentoAprovado = true;
+                this.pagamentoAprovadoObj = pagamento;
+                confirmarButton.setDisable(false);
+            });
+
+            Stage stage = new Stage();
+            stage.setTitle("Pagamento - Dinheiro");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.show();
+
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, "Erro ao abrir tela de pagamento: " + e.getMessage()).show();
+        }
+    }
+
+    private void abrirTelaPagamentoPix() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/pagamentoPix.fxml"));
+        Parent root = loader.load();
+
+        PagamentoPixController controller = loader.getController();
+
+        double valorCompra = calcularValor(checkinCombo.getValue(), resolveDataHora());
+
+        controller.receberDados(valorCompra);
+
+        controller.setCallbackPagamento(pagamento -> {
+            this.pagamentoAprovado = true;
+            this.pagamentoAprovadoObj = pagamento;
+            confirmarButton.setDisable(false);
+        });
+
+        Stage stage = new Stage();
+        stage.setTitle("Pagamento - Pix");
+        stage.setScene(new Scene(root));
+        stage.setResizable(false);
+        stage.show();
+
+    } catch (Exception e) {
+        new Alert(Alert.AlertType.ERROR, "Erro ao abrir tela de pagamento: " + e.getMessage()).show();
+    }
 }
 
+    @FXML
+    private void onFormaPagamentoChanged(ActionEvent event) {
+        String selected = formaPagamentoCombo.getValue();
+    
+        if ("Cartão".equals(selected)) {
+            abrirTelaPagamentoCartao();
+        } 
+        else if ("Dinheiro".equals(selected)) {
+            abrirTelaPagamentoDinheiro();
+        } 
+        else if ("Pix".equals(selected)) {
+            abrirTelaPagamentoPix();
+        }
+    }
+    
+   public void onPagamentoConcluido(boolean aprovado) {
+    this.pagamentoAprovado = aprovado;
+    confirmarButton.setDisable(!aprovado);
+
+    if (!aprovado) {
+        new Alert(Alert.AlertType.ERROR, "Pagamento não aprovado.").show();
+    }
+}
+}

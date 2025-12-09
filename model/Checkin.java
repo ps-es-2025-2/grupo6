@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.util.regex.Pattern;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -26,6 +27,9 @@ public class Checkin {
 
     @DatabaseField(canBeNull = false, columnName = "finalizado")
     private boolean finalizado = false;
+
+    public static final Pattern HORA_MINUTO_PATTERN =
+    Pattern.compile("^([01][0-9]|2[0-3]):[0-5][0-9]$");
 
     public Checkin() {
     }
@@ -64,6 +68,15 @@ public class Checkin {
 
     public void setHorarioEntrada(LocalDateTime horarioEntrada) {
         this.horarioEntrada = horarioEntrada;
+    }
+
+    public static void validarHorarioEntrada(String horarioEntrada) {
+        if (horarioEntrada == null || horarioEntrada.isBlank()) {
+            throw new IllegalArgumentException("A data e hora são obrigatórias.");
+        }
+        if (!HORA_MINUTO_PATTERN.matcher(horarioEntrada.trim()).matches()) {
+            throw new IllegalArgumentException("A hora de entrada esta em um formato inválido.");
+        }
     }
 
     public String getObservacao() {

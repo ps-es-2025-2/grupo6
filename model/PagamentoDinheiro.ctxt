@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=PagamentoDinheiro
+comment1.params=
+comment1.target=PagamentoDinheiro()
+comment2.params=checkout\ valor\ valorRecebido\ troco
+comment2.target=PagamentoDinheiro(Checkout,\ double,\ double,\ double)
+comment3.params=
+comment3.target=boolean\ processarPagamento()
+comment4.params=
+comment4.target=double\ getValorRecebido()
+comment5.params=
+comment5.target=double\ getTroco()
+comment6.params=valorRecebido
+comment6.target=void\ setValorRecebido(double)
+comment7.params=troco
+comment7.target=void\ setTroco(double)
+numComments=8
