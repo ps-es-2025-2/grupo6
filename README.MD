@@ -8,6 +8,17 @@ A persistência dos dados é realizada por meio do SQLite, integrado via ORMLite
 
 A aplicação foi projetada para contemplar todas as etapas do fluxo operacional de um estacionamento, oferecendo uma interface clara, responsiva e estilizada através de CSS personalizado.
 
+ÍNDICE
+-----------------
+- Pilha Tecnológica
+- Estrutura de pastas
+- Como executar
+- Clonando o projeto no github
+- Configuração de banco de dados
+- Executando o projeto
+- Tutorial passo a passo
+- Detalhes arquiteturais
+
 PILHA TECNOLÓGICA
 -----------------
 - Java 11+
